@@ -1,0 +1,20 @@
+id;name;surname;affiliation;country;methodName;methodAbbrv
+12;Sergio;Garcia Vega;Université Catholique de Louvain;Belgium;Multi-Step-Ahead Forecasting using Kernel Adaptive Filtering;MSAKAF
+13;Leandro;Maciel;University of Campinas;Brazil;Fuzzy c-regression modeling for time series forecasting and forecast combination;Fuzzy c-regression m
+15;Joerg;Wichard;Scidalis GmbH;Germany;An Adaptive Forecasting Strategy with Hybrid Ensemble Models;HEM
+16;Erol;Egrioglu;Giresun University, Department of Statistics;Turkey;time series fuzzy inference system;TSFIS
+17;Christoph;Bergmeir;Monash University;Australia;Bagged exponential smoothing using Box–Cox and loess-based decomposition and moving block bootstrap;BaggedETS
+18;Christoph;Bergmeir;Monash University;Australia;Exponential smoothing benchmark;ETS
+19;Slawek;Smyl;Microsoft;USA;LSTM neural network;LSTM
+20;Slawek;Smyl;Microsoft;USA;LSTM Neural Network Applied to Deseasonalized Data;LSTM deseasonalized
+21;Slawek;Smyl;Microsoft;USA;An ensemble of LSTM Neural Networks and Exponential Smoothing-style model;Ensemble of LSTMs an
+22;Krishna Kumar;Nagalingam;National University of Singapore;Singapore;Compact Online Recurrent Network for Time Series Prediction;CORN
+23;Grzegorz;Dudek;Czestochowa University of Technology;Poland;Pattern-based Generalized Regression Neural Network Model;PB-GRNN
+24;Grzegorz;Dudek;Czestochowa University of Technology;Poland;Pattern-based Multilayer Perceptron Model;PB-MLP
+25;Grzegorz;Dudek;Czestochowa University of Technology;Poland;Pattern-based Random Forest Model;PB-RF
+26;Sven F.;Crone;Lancaster Centre for Forecasting;UK;Multilayer Perceptron;MLP
+27;Tatjana;Afanasjeva;Ulyanovsk state technical university;Russian Federation;multiple TS fuzzy & ARIMA;MTSFA
+28;Bingyu;Zhou;Delft University of Technology;Netherlands;Fully Connected Deep Neural Network;FCDNN
+29;Clara;Cordeiro;University of Algarve;Portugal;Boot.EXPOS;Boot.EXPOS
+30;Vitor N.;Coelho;Universidade Federal de Minas Gerais;Brazil;Hybrid Forecasting Model;HFM
+31;Mikhail;Artukhov;Everest Research LLC;Russian;Time series forecasting using ensemble models;REST
