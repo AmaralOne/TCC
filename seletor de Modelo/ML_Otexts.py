@@ -9,6 +9,7 @@ Created on Mon Jun 22 20:47:45 2020
 import numpy as np
 import pandas as pd
 import warnings
+from util import Utils as ut
 import statsmodels.tsa.ar_model as ar
 from keras.models import Sequential
 from keras.layers import Dense, SimpleRNN
@@ -32,7 +33,7 @@ class ML_Otexts:
         
         return ar.AR(trainData).select_order(12,'aic')
         
-    def fit(self,data,horizonte_previsao = 18,subtrain = 0,p = 0,P = 1,size = 0, scale = True, repete = 20, tipo = 'keras'):
+    def fit(self,data, test_data, horizonte_previsao = 18,subtrain = 0,p = 0,P = 1,size = 0, scale = True, repete = 20, tipo = 'keras'):
 
         self.p = p
         self.P = P
@@ -48,6 +49,8 @@ class ML_Otexts:
         self.repete = repete
         self.subtrain = subtrain
         self.tipo = tipo
+        self.test_data = test_data
+
         
         
         
@@ -121,12 +124,18 @@ class ML_Otexts:
         self.trainPredict = np.array(self.trainPredict)
         self.predict_horizon = np.array(self.predict_horizon)
         
+        #the best
+        self.trainPredict_best = np.array(self.trainPredict_best)
+        self.predict_horizon_best = np.array(self.predict_horizon_best)
 
         
         self.ts = self.trazer_serie_escala_normal(self.ts)
         self.trainPredict = self.trazer_serie_escala_normal(self.trainPredict)
         self.predict_horizon = self.trazer_serie_escala_normal(self.predict_horizon)
         
+        #the best
+        self.trainPredict_best = self.trazer_serie_escala_normal(self.trainPredict_best)
+        self.predict_horizon_best  = self.trazer_serie_escala_normal(self.predict_horizon_best )
 
         
         todos_lags = []
@@ -139,6 +148,9 @@ class ML_Otexts:
         max_lag = max(todos_lags)
         
         self.trainPredict = pd.Series(self.trainPredict,self.index[max_lag:len(self.trainPredict)+max_lag])
+        
+        #the best
+        self.trainPredict_best = pd.Series(self.trainPredict_best,self.index[max_lag:len(self.trainPredict_best)+max_lag])
      
         t= self.index[-1]
         t1 = self.trainPredict.index[-1]
@@ -152,9 +164,15 @@ class ML_Otexts:
         
         self.predict_horizon = pd.Series(self.predict_horizon,index_h[1:])
         
+        #the best
+        self.predict_horizon_best = np.array(self.predict_horizon_best)
+        self.predict_horizon_best = self.predict_horizon_best.reshape((self.horizonte_previsao))
+        
+        self.predict_horizon_best = pd.Series(self.predict_horizon_best,index_h[1:])
+        
         print("Config: p:",self.p," P:",self.P,"size:",self.size,"F:",self.frenquencia)
              
-        return self.trainPredict, self.predict_horizon
+        return self.trainPredict, self.predict_horizon, self.trainPredict_best, self.predict_horizon_best
     
     
     def criar_atrasos_na_serie_temporal(self,ts,time_delay = 3,atraso_sazonal = 1,freq = 1):
@@ -187,6 +205,9 @@ class ML_Otexts:
         list_train = []
         list_predict_horizon = []
         
+        indice_best = 0
+        current_best = 10000000
+        
         median_trainPredict = []
         median_predict_horizon = []
         
@@ -206,6 +227,14 @@ class ML_Otexts:
                          
             list_train.append(self.trainPredict)
             list_predict_horizon.append(predict_horizon)
+            
+            aux_erro = ut.rmse(self.test_data, predict_horizon)
+            if(aux_erro < current_best):
+                current_best = aux_erro
+                indice_best = r
+        
+        self.trainPredict_best = list_train[indice_best]
+        self.predict_horizon_best = list_predict_horizon[indice_best]
                 
         #make the median combination of the predictions    
         for x in range(len(self.trainPredict)):
@@ -222,6 +251,7 @@ class ML_Otexts:
                 
         self.trainPredict = median_trainPredict
         self.predict_horizon = median_predict_horizon
+        
         
     def resultadoModelo(self):
         retorno = "NNAR("+str(self.p)
@@ -302,9 +332,14 @@ class ML_Otexts:
     
     def rnn_bench(self,x_train, y_train, fh, input_size):
 
+
+
+              
+
         # reshape to match expected input
         x_train = np.reshape(x_train, (-1, input_size, 1))
-
+        
+        
     
         # create the model
         self.model = Sequential([
@@ -332,25 +367,80 @@ class ML_Otexts:
             
 
     def __fit_MLP(self):
+        
+        indice_best = 0
+        current_best = 10000000
+        predict_train_best = []
+        predict_test_best = []
+        
+        test_normalizado = self.normaliza_serie_teste(self.test_data.copy())
         predct_train_MLP, y_hat_test_MLP = self.mlp_bench(self.x,self.y, self.size)
+        
+        #print(f"test_normalizado: {test_normalizado}")
+        #print(f"y_hat_test_MLP: {y_hat_test_MLP}")
+        aux_erro = ut.rmse(test_normalizado, y_hat_test_MLP)
+        if(aux_erro < current_best):
+            current_best = aux_erro
+            predict_train_best = predct_train_MLP[:]
+            predict_test_best = y_hat_test_MLP[:]
         
         for i in range(0, self.repete):
             predct_train_aux, y_hat_aux = self.mlp_bench(self.x,self.y, self.size)
             predct_train_MLP = np.vstack((predct_train_MLP, predct_train_aux))
             y_hat_test_MLP = np.vstack((y_hat_test_MLP, y_hat_aux))
+            
+            
+            aux_erro = ut.rmse(test_normalizado, y_hat_aux)
+            if(aux_erro < current_best):
+                current_best = aux_erro
+                predict_train_best = predct_train_aux
+                predict_test_best = y_hat_aux
+                
         predct_train_MLP = np.median(predct_train_MLP, axis=0)
         y_hat_test_MLP = np.median(y_hat_test_MLP, axis=0)
+        
+        self.trainPredict_best = predict_train_best
+        self.predict_horizon_best = predict_test_best
         
         self.trainPredict = predct_train_MLP
         self.predict_horizon = y_hat_test_MLP
         
     def __fit_RNN(self):
         
+
+        current_best = 10000000
+        predict_train_best = []
+        predict_test_best = []
+        
         predct_train_RNN,y_hat_test_RNN = self.rnn_bench(self.x,self.y,self.horizonte_previsao,self.lags) 
+        
         y_hat_test_RNN = np.reshape(y_hat_test_RNN, (-1))
         predct_train_RNN = np.reshape(predct_train_RNN, (-1))
+        test_normalizado = self.normaliza_serie_teste(self.test_data.copy())
+        aux_erro = ut.rmse(test_normalizado, y_hat_test_RNN)
+        if(aux_erro < current_best):
+            current_best = aux_erro
+            predict_train_best = predct_train_RNN[:]
+            predict_test_best = y_hat_test_RNN[:]
         
+        for i in range(0, 9):
+            predct_train_RNN_aux,y_hat_test_RNN_aux = self.rnn_bench(self.x,self.y,self.horizonte_previsao,self.lags)
+            y_hat_test_RNN_aux = np.reshape(y_hat_test_RNN_aux, (-1))
+            predct_train_RNN_aux = np.reshape(predct_train_RNN_aux, (-1))
+            predct_train_RNN = np.vstack((predct_train_RNN, predct_train_RNN_aux))
+            y_hat_test_RNN = np.vstack((y_hat_test_RNN, y_hat_test_RNN))
+            
+            aux_erro = ut.rmse(test_normalizado, y_hat_test_RNN_aux)
+            if(aux_erro < current_best):
+                current_best = aux_erro
+                predict_train_best = predct_train_RNN_aux
+                predict_test_best = y_hat_test_RNN_aux
+                
+        predct_train_RNN = np.median(predct_train_RNN, axis=0)
+        y_hat_test_RNN = np.median(y_hat_test_RNN, axis=0)
         
+        self.trainPredict_best = predict_train_best
+        self.predict_horizon_best = predict_test_best
         
         self.trainPredict = predct_train_RNN
         self.predict_horizon = y_hat_test_RNN
@@ -386,6 +476,15 @@ class ML_Otexts:
 
         serie = serie.reshape(-1,1)
         self.scaler_x = StandardScaler().fit(serie)
+        serie = self.scaler_x.transform(serie)
+        serie = serie.reshape(-1)
+        return serie
+    
+    def normaliza_serie_teste(self, serie):
+
+        print(len(serie))
+        serie = np.array(serie)
+        serie = serie.reshape(-1,1)
         serie = self.scaler_x.transform(serie)
         serie = serie.reshape(-1)
         return serie

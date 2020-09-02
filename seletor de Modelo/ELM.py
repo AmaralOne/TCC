@@ -39,6 +39,8 @@ class ELM(object):
         self.trainPredict_Result = []
         self.testPredict_Result = []
         self.predict_horizon_Result = []
+        self.predict_train_best = []
+        self.predict_test_best = []
         
         # split into train and test sets
         self.__train, self.__test = Util_NN.split_train_and_test(self.__dataset,proportion,1,self.__test_observations)
@@ -110,6 +112,10 @@ class ELM(object):
         median_testPredict_one_step = []
         median_testPredict_mult_step = []
         median_predict_horizon = []
+        
+        
+        indice_best = 0
+        current_best = 10000000
     
         for t in range(0,executions):
             
@@ -128,13 +134,22 @@ class ELM(object):
             predictionsX, predictionsY = self.__forecating(self.__horizion,time_delay,dataset,self.__model)
             test_X, test_Y = self.__forecating(len(test),time_delay,train_aux,self.__model)
 
-                       
+
+            if len(test_Y) == len(self.__test[time_delay:]):
+                aux_erro = ut.rmse(self.__test[time_delay:], test_Y)
+                if(aux_erro < current_best):
+                    #print(f"{t} : {aux_erro}")
+                    current_best = aux_erro
+                    indice_best = t           
             
             executions_trainPredict.append(trainPredict)
             executions_testPredict_one_step.append(testPredict)
             executions_testPredict_mult_step.append(test_Y)
             executions_predict_horizon.append(predictionsY)
             
+        self.predict_train_best = executions_trainPredict[indice_best]
+        self.predict_test_best = executions_testPredict_mult_step[indice_best]
+        
         #make the median combination of the predictions 
         for x in range(len(trainPredict)):
             c = np.array(executions_trainPredict)
@@ -182,6 +197,8 @@ class ELM(object):
             dataTest = np.zeros(((len(test_aux)-lag),(lag+1)))
             dataTest[:,1:(lag+1)] = testX_aux
             dataTest[:,0] = testY_aux
+            
+
             
 
             list_activation_function = ['sigmoid','multiquadric']

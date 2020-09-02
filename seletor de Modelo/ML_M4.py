@@ -8,7 +8,7 @@ import statsmodels.tsa.holtwinters as ts
 import pandas as pd
 import numpy as np
 from numpy.random import seed
-seed(42)
+#seed(42)
 from sklearn.neural_network import MLPRegressor
 from keras.models import Sequential
 from keras.layers import Dense, SimpleRNN
@@ -269,7 +269,7 @@ class ML_M4:
         self.ts = data.values
         self.freq = frequency       # data frequency
         self.in_size = lag    # number of points used as input for each forecast
-        
+        self.test_data = data[:len(data) - horizion]
                
         
         #Desanaliza a série temporal
@@ -288,13 +288,13 @@ class ML_M4:
         for i in range(0, len(self.ts)):
             self.ts[i] = self.ts[i] - ((self.a * i) + self.b)
             
-         
+        self.ts_processada = self.ts.copy()
         
         self.x_train, self.y_train, self.x_test, self.y_test = self.split_into_train_test(self.ts, self.in_size, self.fh)
              
         return self.x_train, self.y_train, self.x_test, self.y_test
     
-    def desPreprocessarSerie(self, data):
+    def desPreprocessarSerie(self, data, p):
         
         
         #print('des 1')
@@ -306,8 +306,9 @@ class ML_M4:
         # add trend
         #print("Tamanho train: ",len(self.ts))
         #print("Tamanho teste: ",self.fh)
-        for i in range(0, len(self.ts)):
-            self.ts[i] = self.ts[i] + ((self.a * i) + self.b)
+        if p ==1: 
+            for i in range(0, len(self.ts)):
+                self.ts[i] = self.ts[i] + ((self.a * i) + self.b)
 
         for i in range(0, self.fh):
             #data[i] = data[i] + ((self.a * (len(self.ts) + i + 1)) + self.b)
@@ -318,10 +319,10 @@ class ML_M4:
         #plt.plot(data)
         #plt.title('des 2')
         #plt.show() 
-            
-        # add seasonality
-        for i in range(0, len(self.ts)):
-            self.ts[i] = self.ts[i] * self.seasonality_in[i % self.freq] / 100
+        if p ==1: 
+            # add seasonality
+            for i in range(0, len(self.ts)):
+                self.ts[i] = self.ts[i] * self.seasonality_in[i % self.freq] / 100
             
         #daaaa for i in range(len(self.ts), len(self.ts) + self.fh):
             #data[i - len(self.ts)] = data[i - len(self.ts)] * self.seasonality_in[i % self.freq] / 100
@@ -395,18 +396,45 @@ class ML_M4:
         return train_Index, test_Index
     
     def fit_MLP(self):
+        
+        indice_best = 0
+
+        current_best = 900000000
+        predict_train_best = []
+        predict_test_best = []
+        
+
         predct_train_MLP, y_hat_test_MLP = self.mlp_bench(self.x_train, self.y_train, self.x_test, self.fh)
+        
+
+        aux_erro = ut.rmse(self.ts[len(self.ts)-self.fh:], y_hat_test_MLP)
+        if(aux_erro < current_best):
+            current_best = aux_erro
+            predict_train_best = predct_train_MLP[:]
+            predict_test_best = y_hat_test_MLP[:]
         
         for i in range(0, 29):
             predct_train_aux, y_hat_aux = self.mlp_bench(self.x_train, self.y_train, self.x_test, self.fh)
             predct_train_MLP = np.vstack((predct_train_MLP, predct_train_aux))
             y_hat_test_MLP = np.vstack((y_hat_test_MLP, y_hat_aux))
+            
+            
+            aux_erro = ut.rmse(self.ts[len(self.ts)-self.fh:], y_hat_aux)
+            
+
+            if(aux_erro < current_best):
+                current_best = aux_erro
+                predict_train_best = predct_train_aux
+                predict_test_best = y_hat_aux
+                
         predct_train_MLP = np.median(predct_train_MLP, axis=0)
         y_hat_test_MLP = np.median(y_hat_test_MLP, axis=0)
         
+        self.predct_train_MLP_best = self.desPreprocessarSerieTrain(predict_train_best)
+        self.y_hat_test_MLP_best = self.desPreprocessarSerie(predict_test_best,1)  
         
         self.predct_train_MLP = self.desPreprocessarSerieTrain(predct_train_MLP)
-        self.y_hat_test_MLP = self.desPreprocessarSerie(y_hat_test_MLP)   
+        self.y_hat_test_MLP = self.desPreprocessarSerie(y_hat_test_MLP,0)   
         
         
 #        self.err_MLP_sMAPE.append(ut.smape(self.y_test, self.y_hat_test_MLP))
@@ -415,27 +443,58 @@ class ML_M4:
         
         self.predct_train_MLP, self.y_hat_test_MLP = self.treat_output(self.predct_train_MLP, self.y_hat_test_MLP)
         
-        return self.predct_train_MLP, self.y_hat_test_MLP
+        self.predct_train_MLP_best, self.y_hat_test_MLP_best = self.treat_output(self.predct_train_MLP_best, self.y_hat_test_MLP_best)
+        
+        return self.predct_train_MLP, self.y_hat_test_MLP, self.predct_train_MLP_best, self.y_hat_test_MLP_best
     
     def fit_RNN(self):
         
-        
+        current_best = 900000000
+        predict_train_best = []
+        predict_test_best = []
         
         predct_train_RNN,y_hat_test_RNN = self.rnn_bench(self.x_train, self.y_train, self.x_test, self.fh, self.in_size) 
         y_hat_test_RNN = np.reshape(y_hat_test_RNN, (-1))
         predct_train_RNN = np.reshape(predct_train_RNN, (-1))
         
-        self.predct_train_RNN = self.desPreprocessarSerieTrain(predct_train_RNN)
-        self.y_hat_test_RNN = self.desPreprocessarSerie(y_hat_test_RNN)     
+        aux_erro = ut.rmse(self.ts[len(self.ts)-self.fh:], y_hat_test_RNN)
+        if(aux_erro < current_best):
+            current_best = aux_erro
+            predict_train_best = predct_train_RNN[:]
+            predict_test_best = y_hat_test_RNN[:]
+            
+        for i in range(0, 9):
+            predct_train_RNN_aux,y_hat_test_RNN_aux = self.rnn_bench(self.x_train, self.y_train, self.x_test, self.fh, self.in_size) 
+            y_hat_test_RNN_aux = np.reshape(y_hat_test_RNN_aux, (-1))
+            predct_train_RNN_aux = np.reshape(predct_train_RNN_aux, (-1))
+            predct_train_RNN = np.vstack((predct_train_RNN, predct_train_RNN_aux))
+            y_hat_test_RNN = np.vstack((y_hat_test_RNN, y_hat_test_RNN))
+            
+            aux_erro = ut.rmse(self.ts[len(self.ts)-self.fh:], y_hat_test_RNN_aux)
+            if(aux_erro < current_best):
+                current_best = aux_erro
+                predict_train_best = predct_train_RNN_aux
+                predict_test_best = y_hat_test_RNN_aux
+                
+        predct_train_RNN = np.median(predct_train_RNN, axis=0)
+        y_hat_test_RNN = np.median(y_hat_test_RNN, axis=0)
         
+        self.predct_train_RNN = self.desPreprocessarSerieTrain(predct_train_RNN)
+        self.y_hat_test_RNN = self.desPreprocessarSerie(y_hat_test_RNN,1)     
+        
+        
+        self.predct_train_RNN_best = self.desPreprocessarSerieTrain(predict_train_best)
+        self.y_hat_test_RNN_best = self.desPreprocessarSerie(predict_test_best,0) 
         
        # self.err_RNN_sMAPE.append(ut.smape(self.y_test, self.y_hat_test_RNN))
        # self.err_RNN_MASE.append(ut.mase_ML(self.ts[:-self.fh], self.y_test, self.y_hat_test_RNN, self.freq))
         
         
         self.predct_train_RNN, self.y_hat_test_RNN = self.treat_output(self.predct_train_RNN, self.y_hat_test_RNN)
+        self.predct_train_RNN_best, self.y_hat_test_RNN_best = self.treat_output(self.predct_train_RNN_best, self.y_hat_test_RNN_best)
+       
         
-        return self.predct_train_RNN, self.y_hat_test_RNN
+        return self.predct_train_RNN, self.y_hat_test_RNN, self.predct_train_RNN_best, self.y_hat_test_RNN_best 
     
     def fit_ELM(self):
         data_aux = pd.Series(self.ts,self.Data.index)
@@ -443,13 +502,21 @@ class ML_M4:
         model.predictions(20)
         #preditc_train = model.trainPredict_Result
         #preditc_test = model.testPredict_Result
+        preditc_trai_best = model.predict_train_best
+        preditc_test_best = model.predict_test_best
+        
         preditc_train = model.trainPredict
         preditc_test = model.testPredict
         self.in_size = model.time_delay()
+        
+
 
         
         self.predct_train_ELM = self.desPreprocessarSerieTrain(preditc_train)
-        self.y_hat_test_ELM = self.desPreprocessarSerie(preditc_test)     
+        self.y_hat_test_ELM = self.desPreprocessarSerie(preditc_test,1)     
+        
+        self.predct_train_ELM_best = self.desPreprocessarSerieTrain(preditc_trai_best)
+        self.y_hat_test_ELM_best = self.desPreprocessarSerie(preditc_test_best,0)   
         
         
         #self.err_ELM_sMAPE.append(ut.smape(self.y_test, self.y_hat_test_ELM))
@@ -458,7 +525,9 @@ class ML_M4:
         
         self.predct_train_ELM, self.y_hat_test_ELM = self.treat_output(self.predct_train_ELM, self.y_hat_test_ELM)
         
-        return self.predct_train_ELM, self.y_hat_test_ELM
+        self.predct_train_ELM_best, self.y_hat_test_ELM_best = self.treat_output(self.predct_train_ELM_best, self.y_hat_test_ELM_best)
+        
+        return self.predct_train_ELM, self.y_hat_test_ELM, self.predct_train_ELM_best, self.y_hat_test_ELM_best 
     
     def lag(self):
         return True

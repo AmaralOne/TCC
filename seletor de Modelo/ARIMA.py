@@ -22,11 +22,17 @@ class ARIMA:
         self.testData = []
         
         # Fit a simple auto_arima model
-        self.Model = pm.auto_arima(self.trainData, error_action='ignore', trace=False,
-                      suppress_warnings=True, maxiter=20,
-                      seasonal=True, m=freq, return_valid_fits = False )
         
-        trainingFit= self.Model.predict_in_sample(exogenous=None, return_conf_int=False)
+        try:
+            trainingFit= self.Model.predict_in_sample(exogenous=None, return_conf_int=False)
+        except:
+            self.Model = pm.auto_arima(self.trainData, error_action='ignore', trace=False,
+                      suppress_warnings=True, maxiter=20,
+                      seasonal=True, m=1, return_valid_fits = False )
+            
+            trainingFit= self.Model.predict_in_sample(exogenous=None, return_conf_int=False)
+        
+        
         trainPredictions = pd.Series(trainingFit,self.trainData.index)
         
         #print(self.Model.summary())

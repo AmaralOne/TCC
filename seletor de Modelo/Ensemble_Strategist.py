@@ -60,7 +60,10 @@ class Ensemble_Strategist:
         return resut_comb_media_aparada
     
     def weighted_average_Combination(self,ts,test_size,methods,results,errors):
-        erros = list(errors.values())
+        erros = {}
+        for m in methods:
+            erros[m] = errors[m]
+        erros = list(erros.values())
         erros = np.array(erros)
         e = erros **-1
         total_erro = e.sum();

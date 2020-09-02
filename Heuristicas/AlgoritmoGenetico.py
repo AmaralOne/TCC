@@ -115,13 +115,18 @@ class AlgoritmoGenetico():
         self.melhor_solucao = self.populacao[0]
         self.lista_solucoes.append(self.melhor_solucao.nota_avaliacao)
         
+        metade = self.tamanho_populacao // 2
+        
+        for i in range(metade):
+            self.populacao.pop()
+        
         self.visualiza_geracao()
         
         for geracao in range(numero_geracoes):
             soma_avaliacao = self.soma_avaliacoes()
             nova_populacao = []
             
-            for individuos_gerados in range(0, self.tamanho_populacao, 2):
+            for individuos_gerados in range(0, (self.tamanho_populacao//2), 2):
                 pai1 = self.seleciona_pai(soma_avaliacao)
                 pai2 = self.seleciona_pai(soma_avaliacao)
                 
@@ -130,12 +135,17 @@ class AlgoritmoGenetico():
                 nova_populacao.append(filhos[0].mutacao(taxa_mutacao))
                 nova_populacao.append(filhos[1].mutacao(taxa_mutacao))
             
-            self.populacao = list(nova_populacao)
+            self.populacao.extend(list(nova_populacao))
             
             for individuo in self.populacao:
                 individuo.avaliacao()
             
             self.ordena_populacao()
+            
+            metade = self.tamanho_populacao // 2
+        
+            for i in range(metade):
+                self.populacao.pop()
             
             self.visualiza_geracao()
             

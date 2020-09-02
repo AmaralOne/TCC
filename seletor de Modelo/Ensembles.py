@@ -22,6 +22,7 @@ class Ensembles:
        
         print("")
         self.result = {}
+        self.result_train = {}
         self.tempoExecModelos = {}
         
         self.method_slector = MethodSelector.MethodSelector()
@@ -29,61 +30,144 @@ class Ensembles:
         self.predict_erros = Predicts_Erro.Predicts_Erro()
              
         
-    def Ensembles_predict(self,ensembles, methods, data,tain_data,test_data):
-            
+    def Ensembles_predict(self,ensembles, methods, data,tain_data,test_data,intervalo_dos_estocasticos, tamanhoValidacao):
+        i = 0
+        plt.plot(data,label='Original')
         for m in methods:
             print(m)
             ts = data.copy()
             t1 = time.time()
-            preditc_train, preditc_test = self.method_slector.method_Predict(m,ts,tain_data,test_data)
-            tempoExec = time.time() - t1
-            self.tempoExecModelos[m] = tempoExec
-            print("Tempo de execução: {} segundos".format(tempoExec))
-            self.result[m] = preditc_test
+            if i >= intervalo_dos_estocasticos:
+                preditc_train, preditc_test, preditc_train_best, preditc_test_best = self.method_slector.method_Predict(m,ts,tain_data,test_data,1)
+                tempoExec = time.time() - t1
+                #self.tempoExecModelos[m+"_best"] = tempoExec
+                self.tempoExecModelos[m] = tempoExec
+                print("Tempo de execução: {} segundos".format(tempoExec))
+                self.result[m] = preditc_test
+                self.result[m+"_best"] = preditc_test_best
+                self.result_train[m] = preditc_train
+                self.result_train[m+"_best"] = preditc_train_best
+                plt.plot(preditc_test, label=m)
+                plt.plot(preditc_test_best, label=m+"_best")
+            else:
+                preditc_train, preditc_test = self.method_slector.method_Predict(m,ts,tain_data,test_data)
+                tempoExec = time.time() - t1
+                self.tempoExecModelos[m] = tempoExec           
+                print("Tempo de execução: {} segundos".format(tempoExec))
+                self.result[m] = preditc_test
+                self.result_train[m] = preditc_train
+                plt.plot(preditc_test, label=m)
+            i += 1
+        plt.legend(loc="upper left")
+        plt.gcf().autofmt_xdate()
+        plt.show()
         
         print(self.result)
-        forecast_errors_mse = self.predict_erros.error_MSE(methods,self.result,test_data)      
-        forecast_errors_rmse = self.predict_erros.error_RMSE(methods,self.result,test_data)
         
+        print(f" tamanho validação: {tamanhoValidacao}")
+        print(f" len(self.result): {len(self.result)}")
         
+        result_validation = self.result.copy()
+        for m in result_validation:
+            result_validation[m] = result_validation[m][:-tamanhoValidacao]
+            
+        forecast_errors_mse = self.predict_erros.error_MSE(methods,result_validation,test_data[:-tamanhoValidacao])      
+        forecast_errors_rmse = self.predict_erros.error_RMSE(methods,result_validation,test_data[:-tamanhoValidacao])
+        #train_errors_rmse = self.predict_erros.error_RMSE(methods,self.result_train,tain_data)
+
+        tempo_total = sum(self.tempoExecModelos.values())
+        print(f"Tempo Total: {tempo_total}")
+        
+        t1 = time.time()
         result_comb_media = self.ensembles_strategist.Mean_Combination(data,len(test_data),methods,self.result)
+        tempoExec = time.time() - t1
+        self.tempoExecModelos['Comb Media'] = tempoExec + tempo_total
+        
+        t1 = time.time()
         result_comb_mediana = self.ensembles_strategist.Median_Combination(data,len(test_data),methods,self.result)
+        tempoExec = time.time() - t1
+        self.tempoExecModelos['Comb Mediana'] = tempoExec + tempo_total
+        
+        t1 = time.time()
         result_comb_media_aparada = self.ensembles_strategist.Trimmed_Mean_Combination(data,len(test_data),methods,self.result)
+        tempoExec = time.time() - t1
+        self.tempoExecModelos['Comb Media Aparada'] = tempoExec + tempo_total
+        
+        t1 = time.time()
         result_comb_media_ponderada = self.ensembles_strategist.weighted_average_Combination(data,len(test_data),methods,self.result,forecast_errors_mse)
+        tempoExec = time.time() - t1
+        self.tempoExecModelos['Comb Media Ponderada'] = tempoExec + tempo_total
+        
+        
         print("")
         print("erros:")
         print(forecast_errors_rmse)
         
+        self.result['Comb Media'] = result_comb_media
+        self.result['Comb Mediana'] = result_comb_mediana
+        self.result['Comb Media Aparada'] = result_comb_media_aparada
+        self.result['Comb Media Ponderada'] = result_comb_media_ponderada
+        
+        
+        methods_aux = methods[:]
+        for m in range(len(methods_aux)):
+            if methods_aux[m].find("RNN") >= 0:
+                methods_aux[m] = methods_aux[m]+"_best"
+                
+        print(f"novos m :{methods_aux}")
+        time.sleep(5)
+        
+        result_validation = self.result.copy()
+        for m in result_validation:
+            result_validation[m] = result_validation[m][:-tamanhoValidacao]
+            
+        forecast_errors_mse = self.predict_erros.error_MSE(methods_aux,result_validation,test_data[:-tamanhoValidacao])      
+        forecast_errors_rmse = self.predict_erros.error_RMSE(methods_aux,result_validation,test_data[:-tamanhoValidacao])
+        
+
+
+        print(f"Tempo Total: {tempo_total}")
+        
+        t1 = time.time()
+        result_comb_media_best = self.ensembles_strategist.Mean_Combination(data,len(test_data),methods_aux,self.result)
+        tempoExec = time.time() - t1
+        self.tempoExecModelos['Comb Media best'] = tempoExec + tempo_total
+        
+        t1 = time.time()
+        result_comb_mediana_best = self.ensembles_strategist.Median_Combination(data,len(test_data),methods_aux,self.result)
+        tempoExec = time.time() - t1
+        self.tempoExecModelos['Comb Mediana best'] = tempoExec + tempo_total
+        
+        t1 = time.time()
+        result_comb_media_aparada_best = self.ensembles_strategist.Trimmed_Mean_Combination(data,len(test_data),methods_aux,self.result)
+        tempoExec = time.time() - t1
+        self.tempoExecModelos['Comb Media Aparada best'] = tempoExec + tempo_total
+        
+        t1 = time.time()
+        result_comb_media_ponderada_best = self.ensembles_strategist.weighted_average_Combination(data,len(test_data),methods_aux,self.result,forecast_errors_mse)
+        tempoExec = time.time() - t1
+        self.tempoExecModelos['Comb Media Ponderada best'] = tempoExec + tempo_total
+        
+        
+        self.result['Comb Media best'] = result_comb_media_best
+        self.result['Comb Mediana best'] = result_comb_mediana_best
+        self.result['Comb Media Aparada best'] = result_comb_media_aparada_best
+        self.result['Comb Media Ponderada best'] = result_comb_media_ponderada_best
         
         plt.plot(data,label='Original')
         plt.plot(result_comb_media, label='Comb Media')
         plt.plot(result_comb_mediana, label='Comb Mediana')   
         plt.plot(result_comb_media_aparada, label='Comb Media Aparada')   
         plt.plot(result_comb_media_ponderada, label='Comb Media Ponderada')   
+        plt.plot(result_comb_media_best, label='Comb Media best')
+        plt.plot(result_comb_mediana_best, label='Comb Mediana best')   
+        plt.plot(result_comb_media_aparada_best, label='Comb Media Aparada best')   
+        plt.plot(result_comb_media_ponderada_best, label='Comb Media Ponderada best') 
         plt.legend(loc="upper left")
         plt.gcf().autofmt_xdate()
         plt.show()
         
-        return self.result
+        return self.result, self.result_train, self.tempoExecModelos
         
 
-            
-U_m3 = UtilsM3.UtilsM3()
-index = U_m3.listarIndex()
-ts = U_m3.buildM3DataFrame("N1679")
-
-tamanho_teste = 18
     
-#Dividir a Série Temporal em treino e Teste
-tamanho_serie = len(ts)
-incio_de_teste = (tamanho_serie-tamanho_teste)
-trainData = ts[:incio_de_teste]
-testData = ts[incio_de_teste:]
-
-modelos = ['ses','naive','holt','Ar','Croston', 'Arima','SVR A1', 'SVR A2', 'SVR A3',
-               'SVR A4', 'SVR A5', 'SVR A6','NNAR','NNAR RNN','MLP A1','MLP A2','MLP A3',
-               'MLP A4','MLP A5', 'MLP A6','RNN A1','RNN A2','RNN A3',
-               'RNN A4', 'RNN A5','RNN A6', 'ELM']
-            
-e = Ensembles()
-results = e.Ensembles_predict('',modelos,ts,trainData,testData)
