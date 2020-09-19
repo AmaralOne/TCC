@@ -50,8 +50,11 @@ for serie in index:
     
     ts, tamanho_teste = cif.serie(serie)
     
+    
     #Dividir a Série Temporal em treino e Teste
     tamanho_serie = len(ts)
+    tamanho_validacao = (int)((len(ts)-tamanho_teste)*0.2)
+    inico_de_validacao = (tamanho_serie-(tamanho_teste+tamanho_validacao))
     inico_de_validacao = (tamanho_serie-(tamanho_teste*2))
     incio_de_teste = (tamanho_serie-tamanho_teste)
     trainData = ts[:incio_de_teste]
@@ -59,7 +62,9 @@ for serie in index:
     testData = ts[incio_de_teste:]
     
     #result_series = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_'+serie+'.xlsx',None)
-    result_series = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif_Retreino\\Resultado_Predict_retreino_'+serie+'.xlsx',None)
+    
+    result_series = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_novo_'+serie+'.xlsx',None)
+    #result_series = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif_Retreino\\Resultado_Predict_retreino_'+serie+'.xlsx',None)
     
     result_validation = result_series.pop('predict_validation')
     result_prediction = result_series.pop('predict_test')
@@ -149,8 +154,8 @@ reuslt_test_smape = reuslt_test_smape.append(line_test_smape_std,ignore_index=Tr
 
 
 
-#writer = pd.ExcelWriter('CIF_ERROS.xlsx', engine='xlsxwriter')
-writer = pd.ExcelWriter('CIF_ERROS_retreino.xlsx', engine='xlsxwriter')
+writer = pd.ExcelWriter('CIF_ERROS_novo_.xlsx', engine='xlsxwriter')
+#writer = pd.ExcelWriter('CIF_ERROS_retreino.xlsx', engine='xlsxwriter')
 reuslt_validation_rmse.to_excel(writer,sheet_name='validation_rmse',index=False)
 reuslt_test_rmse.to_excel(writer,sheet_name='test_rmse',index=False)
 reuslt_validation_smape.to_excel(writer,sheet_name='validation_smape',index=False)

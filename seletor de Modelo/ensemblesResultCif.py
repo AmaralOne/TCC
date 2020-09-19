@@ -13,7 +13,7 @@ import Ensembles
 
 cif = UtilsCIF.UtilsCIF()
 index = cif.listarIndex()
-index = index[64:]
+index = index[44:49]
 
 modelos = ['ses','naive','holt','Ar', 'Arima','SVR A1', 'SVR A2', 'SVR A3',
                'SVR A4', 'SVR A5', 'SVR A6','NNAR','NNAR RNN','MLP A1','MLP A2','MLP A3',
@@ -47,7 +47,7 @@ modelos_finais.append('Comb Media Aparada best')
 modelos_finais.append('Comb Media Ponderada best')
 
 for serie in index:
-    #serie = 'ts54'
+    #serie = 'ts49'
     print(serie)
     ts, tamanho_teste = cif.serie(serie)
     #Imprimir Gráfico da Séreie
@@ -55,15 +55,19 @@ for serie in index:
     plt.title('Série '+serie)
     plt.show()
     
-    
+   # tamanho_validacao = (int)((len(ts)-tamanho_teste)*0.3)
+    tamanho_validacao = (int)((tamanho_teste + (tamanho_teste//2)))
     
     #Dividir a Série Temporal em treino e Teste
     tamanho_serie = len(ts)
-    inico_de_validacao = (tamanho_serie-(tamanho_teste*2))
+    inico_de_validacao = (tamanho_serie-(tamanho_teste+tamanho_validacao))
+    #inico_de_validacao = (tamanho_serie-(tamanho_teste*2))
+    #tamanho_validacao = tamanho_teste
     incio_de_teste = (tamanho_serie-tamanho_teste)
     trainData = ts[:inico_de_validacao]
     validationData = ts[inico_de_validacao:]
     testData = ts[incio_de_teste:]
+    len(trainData)
 
 
     e = Ensembles.Ensembles()
@@ -87,72 +91,92 @@ for serie in index:
             line_train[str(p+inicio)] = train_models[m][p]
         train_models_reuslt = train_models_reuslt.append(line_train,ignore_index=True)
             
-
-    
-    if(tamanho_teste == 11):
-        cols = ['Modelo','1','2','3','4','5','6','7','8','9','10','11']
         
-        predict_models_validation = pd.DataFrame(columns=cols)
-        predict_models_test = pd.DataFrame(columns=cols)
-        for m in modelos_finais:
-            line_validation = {'Modelo':m,
-                            '1': results[m][0],
-                            '2': results[m][1],
-                            '3': results[m][2],
-                            '4': results[m][3],
-                            '5': results[m][4],
-                            '6': results[m][5],
-                            '7': results[m][6],
-                            '8': results[m][7],
-                            '9': results[m][8],
-                            '10': results[m][9],
-                            '11': results[m][10],
+    cols_valida = ["Modelo"]
+    cols_teste = ["Modelo"]
+    for p in range((tamanho_validacao)):
+        cols_valida.append(str(p))
+    for p in range(tamanho_teste):
+        cols_teste.append(str(p))
+    predict_models_validation = pd.DataFrame(columns=cols_valida)
+    predict_models_test = pd.DataFrame(columns=cols_teste)
+    for m in modelos_finais:
+        line_validation = {}
+        line_validation['Modelo'] = m
+        line_test = {}
+        line_test['Modelo'] = m
+        inicio = tamanho_validacao        
+        for p in range((tamanho_validacao)):
+            line_validation[str(p)] = results[m][p]
+        for p in range((tamanho_teste)):
+            line_test[str(p)] = results[m][p+tamanho_validacao]
+        predict_models_validation = predict_models_validation.append(line_validation,ignore_index=True)
+        predict_models_test = predict_models_test.append(line_test,ignore_index=True)
+    
+    #if(tamanho_teste == 11):
+     #   cols = ['Modelo','1','2','3','4','5','6','7','8','9','10','11']
+        
+      #  predict_models_validation = pd.DataFrame(columns=cols)
+       # predict_models_test = pd.DataFrame(columns=cols)
+        #for m in modelos_finais:
+         #   line_validation = {'Modelo':m,
+          #                  '1': results[m][0],
+           #                 '2': results[m][1],
+            #                '3': results[m][2],
+             #               '4': results[m][3],
+              #              '5': results[m][4],
+               #             '6': results[m][5],
+                #            '7': results[m][6],
+                 #           '8': results[m][7],
+                  #          '9': results[m][8],
+                   #         '10': results[m][9],
+                    #        '11': results[m][10],
 
                             
-                        }
-            line_test = {'Modelo':m,
-                            '1': results[m][11],
-                            '2': results[m][12],
-                            '3': results[m][13],
-                            '4': results[m][14],
-                            '5': results[m][15],
-                            '6': results[m][16],
-                            '7': results[m][17],
-                            '8': results[m][18],
-                            '9': results[m][19],
-                            '10': results[m][20],
-                            '11': results[m][21],
+                   #     }
+            #line_test = {'Modelo':m,
+             #               '1': results[m][11],
+              #              '2': results[m][12],
+               #             '3': results[m][13],
+                #            '4': results[m][14],
+                 #           '5': results[m][15],
+                  #          '6': results[m][16],
+                   #         '7': results[m][17],
+                    #        '8': results[m][18],
+                     #       '9': results[m][19],
+                      #      '10': results[m][20],
+                       #     '11': results[m][21],
 
                             
-                        }
-            predict_models_validation = predict_models_validation.append(line_validation,ignore_index=True)
-            predict_models_test = predict_models_test.append(line_test,ignore_index=True)
-    else:
-        cols = ['Modelo','1','2','3','4','5','6']
-        predict_models_validation = pd.DataFrame(columns=cols)
-        predict_models_test = pd.DataFrame(columns=cols)
-        for m in modelos_finais:
-            line_validation = {'Modelo':m,
-                            '1': results[m][0],
-                            '2': results[m][1],
-                            '3': results[m][2],
-                            '4': results[m][3],
-                            '5': results[m][4],
-                            '6': results[m][5],
-                        }
-            line_test = {'Modelo':m,
-                            '1': results[m][6],
-                            '2': results[m][7],
-                            '3': results[m][8],
-                            '4': results[m][9],
-                            '5': results[m][10],
-                            '6': results[m][11],
-                        }
-            predict_models_validation = predict_models_validation.append(line_validation,ignore_index=True)
-            predict_models_test = predict_models_test.append(line_test,ignore_index=True)
+                       # }
+            #predict_models_validation = predict_models_validation.append(line_validation,ignore_index=True)
+            #predict_models_test = predict_models_test.append(line_test,ignore_index=True)
+    #else:
+     #   cols = ['Modelo','1','2','3','4','5','6']
+      #  predict_models_validation = pd.DataFrame(columns=cols)
+       # predict_models_test = pd.DataFrame(columns=cols)
+        #for m in modelos_finais:
+         #   line_validation = {'Modelo':m,
+          #                  '1': results[m][0],
+           #                 '2': results[m][1],
+            #                '3': results[m][2],
+             #               '4': results[m][3],
+              #              '5': results[m][4],
+               #             '6': results[m][5],
+                #        }
+            #line_test = {'Modelo':m,
+             #               '1': results[m][6],
+              #              '2': results[m][7],
+               #             '3': results[m][8],
+                #            '4': results[m][9],
+                 #           '5': results[m][10],
+                  #          '6': results[m][11],
+                   #     }
+            #predict_models_validation = predict_models_validation.append(line_validation,ignore_index=True)
+            #predict_models_test = predict_models_test.append(line_test,ignore_index=True)
     
         
-    writer = pd.ExcelWriter('Resut_cif\Resultado_Predict_'+serie+'.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('Resut_cif\Resultado_Predict_novo_h%'+serie+'.xlsx', engine='xlsxwriter')
     predict_models_validation.to_excel(writer,sheet_name='predict_validation',index=False)
     predict_models_test.to_excel(writer,sheet_name='predict_test',index=False)
     train_models_reuslt.to_excel(writer,sheet_name='train',index=False)

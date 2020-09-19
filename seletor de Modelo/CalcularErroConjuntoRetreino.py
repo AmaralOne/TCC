@@ -59,7 +59,7 @@ for serie in index:
     testData = ts[incio_de_teste:]
     
     #result_series = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_'+serie+'.xlsx',None)
-    result_series = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif_Retreino\\Resultado_Predict_retreino_'+serie+'.xlsx',None)
+    result_series = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif_Retreino\\Resultado_Predict_retreino_novo_'+serie+'.xlsx',None)
     
 
     result_prediction = result_series.pop('predict_test')
@@ -132,7 +132,7 @@ reuslt_test_smape = reuslt_test_smape.append(line_test_smape_std,ignore_index=Tr
 
 
 #writer = pd.ExcelWriter('CIF_ERROS.xlsx', engine='xlsxwriter')
-writer = pd.ExcelWriter('CIF_ERROS_retreino.xlsx', engine='xlsxwriter')
+writer = pd.ExcelWriter('CIF_ERROS_retreino_novo.xlsx', engine='xlsxwriter')
 reuslt_test_rmse.to_excel(writer,sheet_name='test_rmse',index=False)
 reuslt_test_smape.to_excel(writer,sheet_name='test_smape',index=False)
 writer.save()

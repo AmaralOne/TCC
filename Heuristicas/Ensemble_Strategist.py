@@ -53,8 +53,9 @@ class Ensemble_Strategist:
                 aux = results[m]
                 total.append(aux.iloc[x])
             total = np.array(total)
+
             if len(methods) != 1:
-                c_media_aparada = self.media_aparada(total,20)  
+                c_media_aparada = self.media_aparada(total,10)  
             else:
                 c_media_aparada = total
             comb_media_aparada.append(c_media_aparada)
@@ -92,6 +93,12 @@ class Ensemble_Strategist:
     
     def media_aparada(self,arr, percent):
         n = len(arr)
+
         arr = sorted(arr)
+
         k = int(round(n*(float(percent)/100)/2))
+        
+        if n <= 4:
+            k  = -1
+
         return np.mean(arr[k+1:n-k])

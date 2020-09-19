@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 U_m3 = UtilsM3.UtilsM3()
 index = U_m3.listarIndex()
-ts = U_m3.buildM3DataFrame("N1679")
+ts = U_m3.buildM3DataFrame("N1681")
 data12 = ts[:]
 tamanho_teste = 18
     
@@ -30,16 +30,19 @@ testData = ts[incio_de_teste:]
 method_slector = MethodSelector.MethodSelector()
 
 m = 'ELM'
-m = 'MLP A1'
+m = 'MLP A2'
+m = 'SVR A2'
 
 t1 = time.time()
-preditc_train, preditc_test, preditc_train_best, preditc_test_best = method_slector.method_Predict(m,ts.copy(),trainData,testData,1)
+#preditc_train, preditc_test, preditc_train_best, preditc_test_best = method_slector.method_Predict(m,ts.copy(),trainData,testData)
+preditc_train, preditc_test = method_slector.method_Predict(m,ts.copy(),trainData,testData)
 tempoExec = time.time() - t1
 
 print("Tempo de execução: {} segundos".format(tempoExec))
 plt.plot(data12,label='Original')
+plt.plot(preditc_train, label=m)
 plt.plot(preditc_test, label=m)
-plt.plot(preditc_test_best, label=m+"_best")
+#plt.plot(preditc_test_best, label=m+"_best")
 plt.legend(loc="upper left")
 plt.gcf().autofmt_xdate()
 plt.show()

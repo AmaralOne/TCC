@@ -357,6 +357,9 @@ class Utils:
         a = np.reshape(a, (-1,))
         b = np.reshape(b, (-1,))
         return np.mean(2.0 * np.abs(a - b) / (np.abs(a) + np.abs(b))).item()
+    
+    def smape2(A, F):
+        return 100/len(A) * np.sum(2 * np.abs(F - A) / (np.abs(A) + np.abs(F)))
 
 
     def mase_ML(insample, y_test, y_hat_test, freq):

@@ -94,7 +94,7 @@ class Ensembles:
         self.tempoExecModelos['Comb Media Aparada'] = tempoExec + tempo_total
         
         t1 = time.time()
-        result_comb_media_ponderada = self.ensembles_strategist.weighted_average_Combination(data,len(test_data),methods,self.result,forecast_errors_mse)
+        result_comb_media_ponderada = self.ensembles_strategist.weighted_average_Combination(data,len(test_data),methods,self.result,forecast_errors_rmse)
         tempoExec = time.time() - t1
         self.tempoExecModelos['Comb Media Ponderada'] = tempoExec + tempo_total
         

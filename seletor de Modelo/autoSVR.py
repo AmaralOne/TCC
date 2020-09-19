@@ -23,6 +23,7 @@ class autoSVR:
         self.ts = np.array(data)
         self.ts = self.ts.reshape(-1,1)
         self.lag = lag
+        self.horizion = horizion
 
         self.scaler_x = StandardScaler().fit(self.ts)
 
@@ -38,6 +39,9 @@ class autoSVR:
         self.trainX, self.trainY = Util_NN.create_dataset(self.train, lag)
         self.testX, self.testY = Util_NN.create_dataset(self.test, lag)  
         
+        #print(f"self.trainX:\n {self.trainX}")
+        #print("*********************")
+        #print(f"self.testX:\n {self.testX}")
         
     def fit(self):      
         from sklearn.svm import SVR
@@ -80,7 +84,19 @@ class autoSVR:
         pred_y_train = clf.predict(self.trainX)
         pred_y_test = clf.predict(self.testX)
         
-
+        pred_y_test = []
+        
+        last_prediction = clf.predict(self.testX)[0]
+        for i in range(0, self.horizion):
+            #print()
+            #print(f"self.testX:\n {self.testX}")
+            pred_y_test.append(last_prediction)     
+            #print(f"pred_y_test:\n {pred_y_test}")
+            self.testX[0] = np.roll(self.testX[0], -1)
+            self.testX[0, (len(self.testX[0]) - 1)] = last_prediction
+            last_prediction = clf.predict(self.testX)[0]
+        
+        #print(f"self.testX:\n {self.testX}")
         
         pred_y_train = self.scaler_x.inverse_transform(pred_y_train)
         

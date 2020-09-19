@@ -29,9 +29,12 @@ class ML_Otexts:
         warnings.filterwarnings("ignore")
         print()
     
-    def get_quantiade_lag(self, trainData):
+    def get_quantiade_lag(self, trainData):        
+        try:
+            return ar.AR(trainData).select_order(12,'aic')
+        except:
+            return 1
         
-        return ar.AR(trainData).select_order(12,'aic')
         
     def fit(self,data, test_data, horizonte_previsao = 18,subtrain = 0,p = 0,P = 1,size = 0, scale = True, repete = 20, tipo = 'keras'):
 
@@ -100,11 +103,17 @@ class ML_Otexts:
             if(self.P > 0 and self.tamanhoSerie > self.frenquencia * self.P + 2):
                 self.lags = self.p + self.P
             else:
-                self.lags = 0
+                #self.lags = 0
+                self.lags = self.p
                 self.P = 0
         
         if(self.size == 0):
             self.size = round((self.lags + 1)/2)
+            if (self.size == 0):
+                self.size = 1
+        
+        if(self.p == 0):
+            self.p = 1
                    
         #Criar matriz de defasagem
         #Redimensiona os dados para o tamanho do atraso escolhido
@@ -286,6 +295,12 @@ class ML_Otexts:
         
         Home_position = len(dataset)-(self.p)
         Final_position = len(dataset)
+        #print(f"Home_position : {Home_position}")
+        #print(f"Final_position : {Final_position}")
+        #print(f"dataset :{dataset}")
+        #print(f"dataset[Home_position:Final_position] :{dataset[Home_position:Final_position]}")
+        #print(f"self.p: {self.p}")
+        #print(f"time_delay: {time_delay}")
         predictionsX[0][0:self.p] = dataset[Home_position:Final_position]
         for i in range(self.P):
             predictionsX[0][self.p:(self.p+(i+1))] = dataset[len(dataset) - (self.frenquencia * (i+1))]
@@ -320,6 +335,8 @@ class ML_Otexts:
         self.model = MLPRegressor(hidden_layer_sizes=size_hidden, activation='logistic', solver='lbfgs',
                              max_iter=100, learning_rate='adaptive', learning_rate_init=0.001
                              )
+        
+        print(f"size_hidden: {size_hidden}")
         self.model.fit(x_train, y_train)
         #random_state=42
         

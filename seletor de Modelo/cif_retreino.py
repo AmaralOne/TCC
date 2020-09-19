@@ -13,7 +13,7 @@ import Ensemble_Retreino
 
 cif = UtilsCIF.UtilsCIF()
 index = cif.listarIndex()
-index = index[2:]
+index = index[:]
 
 modelos = ['ses','naive','holt','Ar', 'Arima','SVR A1', 'SVR A2', 'SVR A3',
                'SVR A4', 'SVR A5', 'SVR A6','NNAR','NNAR RNN','MLP A1','MLP A2','MLP A3',
@@ -65,7 +65,8 @@ for serie in index:
     validationData = ts[inico_de_validacao:]
     testData = ts[incio_de_teste:]
     
-    result_series = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_'+serie+'.xlsx',None)
+    #result_series = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_'+serie+'.xlsx',None)
+    result_series = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_novo_'+serie+'.xlsx',None)
     result_validation = result_series.pop('predict_validation')
 
     e = Ensemble_Retreino.Ensemble_Retreino()
@@ -130,7 +131,7 @@ for serie in index:
             predict_models_test = predict_models_test.append(line_test,ignore_index=True)
     
         
-    writer = pd.ExcelWriter('Resut_cif_Retreino\Resultado_Predict_retreino_'+serie+'.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('Resut_cif_Retreino\Resultado_Predict_retreino_novo_'+serie+'.xlsx', engine='xlsxwriter')
     predict_models_test.to_excel(writer,sheet_name='predict_test',index=False)
     train_models_reuslt.to_excel(writer,sheet_name='train',index=False)
     model_time = pd.Series(tempoExecModelos, index=tempoExecModelos.keys())
