@@ -53,64 +53,66 @@ class Individuo():
                    n += 1
                    methods_selecionados.append(self.modelos[i])
             print("Metodos Selecionados: ",methods_selecionados)
-            #melhor = 9000000000
+            melhor = 9000000000
             
-            #result_comb = self.ensembles_strategist.Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
-            #erro_aux = ut.rmse(self.test_data,result_comb)
-            #if erro_aux < melhor:
-                #melhor = erro_aux
-               # result_comb_f = result_comb
-              #  self.cromossomo[tamanho_cromossomo-2] = '0'
-             #   self.cromossomo[tamanho_cromossomo-1] = '0'
+            result_comb = self.ensembles_strategist.Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
+            erro_aux = ut.rmse(self.test_data,result_comb)
+            if erro_aux < melhor:
+                melhor = erro_aux
+                result_comb_f = result_comb
+                self.cromossomo[tamanho_cromossomo-2] = '0'
+                self.cromossomo[tamanho_cromossomo-1] = '0'
                 
-            #result_comb = self.ensembles_strategist.Median_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
-            #erro_aux = ut.rmse(self.test_data,result_comb)
-            #if erro_aux < melhor:
-                #melhor = erro_aux
-               # result_comb_f = result_comb
-              #  self.cromossomo[tamanho_cromossomo-2] = '0'
-             #   self.cromossomo[tamanho_cromossomo-1] = '1'
+            result_comb = self.ensembles_strategist.Median_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
+            erro_aux = ut.rmse(self.test_data,result_comb)
+            if erro_aux < melhor:
+                melhor = erro_aux
+                result_comb_f = result_comb
+                self.cromossomo[tamanho_cromossomo-2] = '0'
+                self.cromossomo[tamanho_cromossomo-1] = '1'
                 
-            #result_comb = self.ensembles_strategist.Trimmed_Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
-            #erro_aux = ut.rmse(self.test_data,result_comb)
-            #if erro_aux < melhor:
-                #melhor = erro_aux
-               # result_comb_f = result_comb
-              #  self.cromossomo[tamanho_cromossomo-2] = '1'
-             #   self.cromossomo[tamanho_cromossomo-1] = '0'
+            result_comb = self.ensembles_strategist.Trimmed_Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
+            erro_aux = ut.rmse(self.test_data,result_comb)
+            if erro_aux < melhor:
+                melhor = erro_aux
+                result_comb_f = result_comb
+                self.cromossomo[tamanho_cromossomo-2] = '1'
+                self.cromossomo[tamanho_cromossomo-1] = '0'
                 
-            #forecast_errors_mse = self.predict_erros.error_RMSE(methods_selecionados,self.result_predict,self.test_data)   
-            #result_comb = self.ensembles_strategist.weighted_average_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict,forecast_errors_mse)
-            #erro_aux = ut.rmse(self.test_data,result_comb)
-            #if erro_aux < melhor:
-                #melhor = erro_aux
-                #result_comb_f = result_comb
-                #self.cromossomo[tamanho_cromossomo-2] = '1'
-                #self.cromossomo[tamanho_cromossomo-1] = '1'
+            forecast_errors_mse = self.predict_erros.error_RMSE(methods_selecionados,self.result_predict,self.test_data)   
+            result_comb = self.ensembles_strategist.weighted_average_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict,forecast_errors_mse)
+            erro_aux = ut.rmse(self.test_data,result_comb)
+            if erro_aux < melhor:
+                melhor = erro_aux
+                result_comb_f = result_comb
+                self.cromossomo[tamanho_cromossomo-2] = '1'
+                self.cromossomo[tamanho_cromossomo-1] = '1'
             
-            #print("Media")
-            #result_comb = self.ensembles_strategist.Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
-            #self.cromossomo[tamanho_cromossomo-2] = '0'
-            #self.cromossomo[tamanho_cromossomo-1] = '0'
+            print("Media")
+            result_comb = self.ensembles_strategist.Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
+            self.cromossomo[tamanho_cromossomo-2] = '0'
+            self.cromossomo[tamanho_cromossomo-1] = '0'
             
-            if (self.cromossomo[tamanho_cromossomo-2] == '0') and self.cromossomo[tamanho_cromossomo-1] == '0':
-                print("Media")
-                result_comb = self.ensembles_strategist.Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
-            elif (self.cromossomo[tamanho_cromossomo-2] == '0') and self.cromossomo[tamanho_cromossomo-1] == '1':
-                result_comb = self.ensembles_strategist.Median_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
-                print("Mediana")
-            elif self.cromossomo[tamanho_cromossomo-2] == '1' and self.cromossomo[tamanho_cromossomo-1] == '0':
-                result_comb = self.ensembles_strategist.Trimmed_Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
-                print("Media Aparada")
-            elif self.cromossomo[tamanho_cromossomo-2] == '1' and self.cromossomo[tamanho_cromossomo-1] == '1':
-                print("Media Ponderada")
-                forecast_errors_mse = self.predict_erros.error_RMSE(methods_selecionados,self.result_predict,self.test_data)   
-                result_comb = self.ensembles_strategist.weighted_average_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict,forecast_errors_mse)
+            #if (self.cromossomo[tamanho_cromossomo-2] == '0') and self.cromossomo[tamanho_cromossomo-1] == '0':
+             #   print("Media")
+              #  result_comb = self.ensembles_strategist.Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
+            #elif (self.cromossomo[tamanho_cromossomo-2] == '0') and self.cromossomo[tamanho_cromossomo-1] == '1':
+             #   result_comb = self.ensembles_strategist.Median_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
+              #  print("Mediana")
+           # elif self.cromossomo[tamanho_cromossomo-2] == '1' and self.cromossomo[tamanho_cromossomo-1] == '0':
+            #    result_comb = self.ensembles_strategist.Trimmed_Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
+             #   print("Media Aparada")
+            #elif self.cromossomo[tamanho_cromossomo-2] == '1' and self.cromossomo[tamanho_cromossomo-1] == '1':
+             #   print("Media Ponderada")
+              #  forecast_errors_mse = self.predict_erros.error_RMSE(methods_selecionados,self.result_predict,self.test_data)   
+               # result_comb = self.ensembles_strategist.weighted_average_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict,forecast_errors_mse)
                     
-        #self.erro = sklearn.metrics.mean_squared_error(self.test_data,result_comb) 
+            #self.erro = sklearn.metrics.mean_squared_error(self.test_data,result_comb) 
 
-            self.erro = ut.rmse(self.test_data,result_comb)
+            #self.erro = ut.rmse(self.test_data,result_comb)
+            self.erro = ut.smape(self.test_data,result_comb_f)
             self.nota_avaliacao = (1/self.erro)
+            #self.nota_avaliacao = (1/self.erro) - ((1/self.erro)*0.02*n)
         else:
             self.erro = 100000000
             self.nota_avaliacao = 0
@@ -311,11 +313,11 @@ if __name__ == '__main__':
         erros_smape = []
         erros_rmse = []
         modelos_selecionados_ensemble = pd.DataFrame(columns=cols_r)
-        for i in range(10):
+        for i in range(20):
             #serie = 'ts1'
             #arquivo_result = pd.read_excel("Resultado_Predict_N1679.xlsx")
             arquivo_result = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_validacao30Porcent_'+serie+'.xlsx',None)
-            arquivo_result = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_novo_h%'+serie+'.xlsx',None)
+            arquivo_result = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_novo_20%'+serie+'.xlsx',None)
             
             #results = {}
             #for m in range(len(arquivo_result)):
@@ -343,8 +345,8 @@ if __name__ == '__main__':
             #Dividir a Série Temporal em treino e Teste
             tamanho_serie = len(ts)
             incio_de_teste = (tamanho_serie-tamanho_teste)
-            tamanho_validacao = (int)((len(ts)-tamanho_teste)*0.3)
-            tamanho_validacao = (int)((tamanho_teste + (tamanho_teste//2)))
+            tamanho_validacao = (int)((len(ts)-tamanho_teste)*0.2)
+            #tamanho_validacao = (int)((tamanho_teste + (tamanho_teste//2)))
             inico_de_validacao = (tamanho_serie-(tamanho_teste+tamanho_validacao))
             #inico_de_validacao = (tamanho_serie-(tamanho_teste*2))
             trainData = ts[:incio_de_teste]
@@ -485,50 +487,129 @@ if __name__ == '__main__':
             tamanho_populacao = 20
             taxa_mutacao = 0.10
             numero_geracoes = 100
+            #Resultado: 0,1420
             
             #Cenario 28 com a  correção do svr CONJUNTO validacao 20%
             tamanho_populacao = 40
             taxa_mutacao = 0.10
             numero_geracoes = 100
+            #Resultado: 0,1458
             
             #Cenario 29 com a  correção do svr CONJUNTO validacao 20%
             tamanho_populacao = 40
             taxa_mutacao = 0.10
             numero_geracoes = 200
+            #Resultado: 0,1496
             
             #Cenario 30 com a  correção do svr CONJUNTO validacao 20%
             tamanho_populacao = 20
             taxa_mutacao = 0.10
-            numero_geracoes = 50
+            numero_geracoes = 50         
+            #Resultado: 0,1427
             
             #Cenario 31 com a  correção do svr CONJUNTO validacao 20%
             tamanho_populacao = 20
             taxa_mutacao = 0.10
             numero_geracoes = 75
+            #Resultado: 0,14437
+            
             
             #Cenario 32 com validacao 20% e crossover novo
             tamanho_populacao = 20
             taxa_mutacao = 0.10
             numero_geracoes = 100
+            #Resultado: 0,14434
             
             
             #Cenario 33 com validacao 20% e crossover novo e correção no eletismo
             tamanho_populacao = 10
             taxa_mutacao = 0.10
             numero_geracoes = 100
+            #Resultado: 0,1430
             
             #Cenario 34 com validacao 20% e crossover novo e correção no eletismo
             tamanho_populacao = 10
             taxa_mutacao = 0.10
             numero_geracoes = 200
+            #Resultado: 0,14435
             
             #Cenario 35 com validacao 20% e crossover novo e correção no eletismo
             tamanho_populacao = 20
             taxa_mutacao = 0.10
             numero_geracoes = 100
+            #Resultado: 0,1611
             
             #Cenario 36 com validacao tamanho do teste mais metade do tamanho teste e crossover novo e correção no eletismo
             tamanho_populacao = 20
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            #Resultado: 0,1546
+            
+            #Cenario 37 com validacao tamanho do teste mais metade do tamanho teste e crossover novo e correção no eletismo
+            tamanho_populacao = 20
+            taxa_mutacao = 0.20
+            numero_geracoes = 100
+            #Resultado: 0,1525
+            
+            #Cenario 38 com validacao tamanho do teste mais metade do tamanho teste e crossover novo e correção no eletismo
+            tamanho_populacao = 20
+            taxa_mutacao = 0.05
+            numero_geracoes = 100
+            #Resultado: 0,1566
+            
+            #Cenario 39 com validacao 20% e crossover novo e correção no eletismo
+            tamanho_populacao = 20
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            #Resultado: 0,1444
+            
+            #Cenario 40 com validacao 20% e crossover novo e correção no eletismo
+            tamanho_populacao = 10
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            
+            #Cenario 41 com validacao 20% e crossover novo e correção no eletismo
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            
+            #Cenario 42 com validacao 20% e crossover novo e correção no eletismo
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 75
+            
+            #Cenario 43 com validacao 20% e crossover novo e nova fitnnes
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 75
+            
+            #Cenario 44 com validacao 20% e crossover novo e nova fitnnes mse
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 75
+            
+            #Cenario 45 com validacao 20% e crossover novo e nova fitnnes smape
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 75
+            
+            #Cenario 46 com validacao 20% e crossover novo e nova fitnnes smape, varendo todas estrategia de combinacao
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 75
+            
+            #Cenario 47 com validacao 20% e crossover novo e nova fitnnes smape, varendo todas estrategia de combinacao
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 75
+            
+            #Cenario 48 com validacao 20% e crossover novo e nova fitnnes smape, varendo todas estrategia de combinacao
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 50
+            
+            #Cenario 49 com validacao 20% e crossover novo e nova fitnnes smape, varendo todas estrategia de combinacao
+            tamanho_populacao = 5
             taxa_mutacao = 0.10
             numero_geracoes = 100
             
@@ -607,7 +688,7 @@ if __name__ == '__main__':
                 line_r[str(m+1)] = modelos_escolhidos[m]
 
             modelos_selecionados_ensemble = modelos_selecionados_ensemble.append(line_r,ignore_index=True)
-        modelos_selecionados_ensemble.to_excel(excel_writer='ResultadoEnsemble/36_cenario_Ensemble_'+serie+'.xlsx',index=False)
+        modelos_selecionados_ensemble.to_excel(excel_writer='ResultadoEnsemble/49_cenario_Ensemble_'+serie+'.xlsx',index=False)
         erros_smape = np.array(erros_smape)
         erros_rmse = np.array(erros_rmse)  
         line = {'serie':serie,
@@ -633,5 +714,5 @@ if __name__ == '__main__':
     media_ponderada_result = np.array(media_ponderada_result)
     print('média ponderada (média): ',media_ponderada_result.mean())
     print('média ponderada (std): ',media_ponderada_result.std())
-    reuslt_comb_selection.to_excel(excel_writer='Resultado_Ensemble_smape_cenario_36.xlsx',index=False)
+    reuslt_comb_selection.to_excel(excel_writer='Resultado_Ensemble_smape_cenario_49.xlsx',index=False)
     

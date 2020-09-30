@@ -8,6 +8,7 @@ import UtilsM3
 import UtilsCIF
 from util import Utils as ut
 import numpy as np
+import time
 
 #import pymysql
 
@@ -227,6 +228,9 @@ class AlgoritmoGenetico():
             for i in range(metade):
                 self.populacao.pop()
             
+            print(f"metade da população: {metade}")
+            print(f"TAMANHO ATUAL da população len: {len(self.populacao)}")
+            time.sleep(4)
             self.visualiza_geracao()
             
             melhor = self.populacao[0]
@@ -276,7 +280,7 @@ if __name__ == '__main__':
      #           'ELM']
     
 
-    #index = index[49:]
+    index = index[0:1]
     #cols_r = ['erro validation', 'erro test']
     #cols_r.extend(modelos)
     cols_r = ['erro validation', 'erro test','estrategia comb','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20']
@@ -285,12 +289,12 @@ if __name__ == '__main__':
         erros_smape = []
         erros_rmse = []
         modelos_selecionados_ensemble = pd.DataFrame(columns=cols_r)
-        for i in range(10):
-            #serie = 'ts1'
+        for i in range(1):
+            serie = 'ts1'
             #arquivo_result = pd.read_excel("Resultado_Predict_N1679.xlsx")
             arquivo_result = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_validacao30Porcent_'+serie+'.xlsx',None)
-            arquivo_result = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_novo_30%'+serie+'.xlsx',None)
-            
+            arquivo_result = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_novo_20%'+serie+'.xlsx',None)
+            arquivo_result = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_novo_20%'+serie+'.xlsx',None)
             #results = {}
             #for m in range(len(arquivo_result)):
                 #print(arquivo_result.iloc[m][0])
@@ -317,7 +321,7 @@ if __name__ == '__main__':
             #Dividir a Série Temporal em treino e Teste
             tamanho_serie = len(ts)
             incio_de_teste = (tamanho_serie-tamanho_teste)
-            tamanho_validacao = (int)((len(ts)-tamanho_teste)*0.3)
+            tamanho_validacao = (int)((len(ts)-tamanho_teste)*0.2)
             inico_de_validacao = (tamanho_serie-(tamanho_teste+tamanho_validacao))
             #inico_de_validacao = (tamanho_serie-(tamanho_teste*2))
             trainData = ts[:incio_de_teste]
@@ -484,6 +488,23 @@ if __name__ == '__main__':
             taxa_mutacao = 0.10
             numero_geracoes = 100
             
+            
+            #Cenario 39.1 com validacao 20% e crossover novo e correção no eletismo
+            tamanho_populacao = 20
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            
+            #Cenario 40.1 com validacao 20% e crossover novo e correção no eletismo
+            tamanho_populacao = 10
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            
+            #Cenario 40.2 com validacao 20% e crossover novo e correção no eletismo
+            tamanho_populacao = 20
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            #Resultado :0,1447
+            
             ag = AlgoritmoGenetico(tamanho_populacao)
             resultado = ag.resolver(taxa_mutacao, numero_geracoes,  modelos, ts[:], validationData, results)
             modelos_escolhidos = []
@@ -556,7 +577,7 @@ if __name__ == '__main__':
                 line_r[str(m+1)] = modelos_escolhidos[m]
 
             modelos_selecionados_ensemble = modelos_selecionados_ensemble.append(line_r,ignore_index=True)
-        modelos_selecionados_ensemble.to_excel(excel_writer='ResultadoEnsemble/35_1_cenario_Ensemble_'+serie+'.xlsx',index=False)
+        modelos_selecionados_ensemble.to_excel(excel_writer='ResultadoEnsemble/40_3_cenario_Ensemble_'+serie+'.xlsx',index=False)
         erros_smape = np.array(erros_smape)
         erros_rmse = np.array(erros_rmse)  
         line = {'serie':serie,
@@ -566,5 +587,5 @@ if __name__ == '__main__':
                  'rmse_std': round(erros_rmse.std(),3),
                  }
         reuslt_comb_selection = reuslt_comb_selection.append(line,ignore_index=True)
-    reuslt_comb_selection.to_excel(excel_writer='Resultado_Ensemble_smape_cenario_35_1.xlsx',index=False)
+    reuslt_comb_selection.to_excel(excel_writer='Resultado_Ensemble_smape_cenario_40_3.xlsx',index=False)
     
