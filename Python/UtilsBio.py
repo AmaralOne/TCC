@@ -15,7 +15,7 @@ class UtilsBio:
         self.file = u'bio.xlsx'
         self.path = 'dataset/'
         self.freq = 'M'
-        self.aqruivo = pd.read_excel(self.path+self.file)
+        self.aqruivo = pd.read_excel(self.path+self.file,None)
         
     def listarProdutos(self):
         d = datetime.date(2016,6,30)

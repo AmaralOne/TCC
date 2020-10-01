@@ -54,8 +54,9 @@ class Predicts_Erro:
         erros = {}
         
         for m in modelos:
-            ut.mase_ML(trainData, testData, results[m], self.freq)
-            Erro_MASE_Test = ut.smape(testData,results[m])
+            
+            Erro_MASE_Test = ut.mase_ML(trainData, testData, results[m].values, self.freq)
+            #Erro_MASE_Test = ut.mase(trainData, testData, results[m].values)
             erros[m] =  Erro_MASE_Test
             
         return erros

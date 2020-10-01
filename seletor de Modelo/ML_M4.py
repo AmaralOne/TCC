@@ -17,7 +17,7 @@ from keras import backend as ker
 from math import sqrt
 from util import Utils as ut
 import tensorflow as tf
-tf.random.set_seed(42)
+#tf.random.set_seed(42)
 import gc
 import time
 from ELM import ELM as elm

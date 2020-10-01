@@ -37,10 +37,21 @@ class Ensembles:
             print(m)
             ts = data.copy()
             t1 = time.time()
+            print(f'intervalo_dos_estocasticos {intervalo_dos_estocasticos}')
             if i >= intervalo_dos_estocasticos:
                 preditc_train, preditc_test, preditc_train_best, preditc_test_best = self.method_slector.method_Predict(m,ts,tain_data,test_data,1)
                 tempoExec = time.time() - t1
                 #self.tempoExecModelos[m+"_best"] = tempoExec
+                
+                for x in range(len(preditc_test)):
+                    if preditc_test[x] < 0:
+                        preditc_test[x] = 0
+                        
+                for x in range(len(preditc_test_best)):
+                    if preditc_test_best[x] < 0:
+                        preditc_test_best[x] = 0
+                
+                
                 self.tempoExecModelos[m] = tempoExec
                 print("Tempo de execução: {} segundos".format(tempoExec))
                 self.result[m] = preditc_test
@@ -52,6 +63,11 @@ class Ensembles:
             else:
                 preditc_train, preditc_test = self.method_slector.method_Predict(m,ts,tain_data,test_data)
                 tempoExec = time.time() - t1
+                
+                for x in range(len(preditc_test)):
+                    if preditc_test[x] < 0:
+                        preditc_test[x] = 0
+                        
                 self.tempoExecModelos[m] = tempoExec           
                 print("Tempo de execução: {} segundos".format(tempoExec))
                 self.result[m] = preditc_test

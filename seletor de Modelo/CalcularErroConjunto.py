@@ -14,7 +14,7 @@ cif = UtilsCIF.UtilsCIF()
 index = cif.listarIndex()
 
 
-modelos = ['ses','naive','holt','Ar', 'Arima','SVR A1', 'SVR A2', 'SVR A3',
+modelos = ['ses','naive','holt','Ar', 'Arima', 'Croston','SVR A1', 'SVR A2', 'SVR A3',
                'SVR A4', 'SVR A5', 'SVR A6','NNAR','NNAR RNN','MLP A1','MLP A2','MLP A3',
                'RNN A1','RNN A2','RNN A3',
                 'ELM']
