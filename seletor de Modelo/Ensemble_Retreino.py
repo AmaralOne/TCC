@@ -53,11 +53,11 @@ class Ensemble_Retreino:
                         
                 print("Tempo de execução: {} segundos".format(tempoExec))
                 self.result[m] = preditc_test
-                self.result[m+"_best"] = preditc_test_best
+                #self.result[m+"_best"] = preditc_test_best
                 self.result_train[m] = preditc_train
-                self.result_train[m+"_best"] = preditc_train_best
+                #self.result_train[m+"_best"] = preditc_train_best
                 plt.plot(preditc_test, label=m)
-                plt.plot(preditc_test_best, label=m+"_best")
+                #plt.plot(preditc_test_best, label=m+"_best")
             else:
                 preditc_train, preditc_test = self.method_slector.method_Predict(m,ts,tain_data,test_data)
                 tempoExec = time.time() - t1
@@ -122,61 +122,61 @@ class Ensemble_Retreino:
         self.result['Comb Media Ponderada'] = result_comb_media_ponderada
         
         
-        methods_aux = methods[:]
-        for m in range(len(methods_aux)):
-            if methods_aux[m].find("RNN") >= 0:
-                methods_aux[m] = methods_aux[m]+"_best"
+        #methods_aux = methods[:]
+        #for m in range(len(methods_aux)):
+         #   if methods_aux[m].find("RNN") >= 0:
+          #      methods_aux[m] = methods_aux[m]+"_best"
                 
         
-        results_v = {}
-        for m in range(len(result_validation)):
-            if result_validation.iloc[m][0] not in methods_aux:
-                continue           
-            results_v[result_validation.iloc[m][0]] = pd.Series(result_validation.iloc[m][1:])
+       # results_v = {}
+        #for m in range(len(result_validation)):
+         #   if result_validation.iloc[m][0] not in methods_aux:
+          #      continue           
+           # results_v[result_validation.iloc[m][0]] = pd.Series(result_validation.iloc[m][1:])
     
             
-        forecast_errors_mse = self.predict_erros.error_MSE(methods_aux,results_v,tain_data[len(tain_data)-tamanhoValidacao:])      
-        forecast_errors_rmse = self.predict_erros.error_RMSE(methods_aux,results_v,tain_data[len(tain_data)-tamanhoValidacao:])
+        #forecast_errors_mse = self.predict_erros.error_MSE(methods_aux,results_v,tain_data[len(tain_data)-tamanhoValidacao:])      
+        #forecast_errors_rmse = self.predict_erros.error_RMSE(methods_aux,results_v,tain_data[len(tain_data)-tamanhoValidacao:])
         
 
 
         print(f"Tempo Total: {tempo_total}")
         
-        t1 = time.time()
-        result_comb_media_best = self.ensembles_strategist.Mean_Combination(data,len(test_data),methods_aux,self.result)
-        tempoExec = time.time() - t1
-        self.tempoExecModelos['Comb Media best'] = tempoExec + tempo_total
+        #t1 = time.time()
+        #result_comb_media_best = self.ensembles_strategist.Mean_Combination(data,len(test_data),methods_aux,self.result)
+        #tempoExec = time.time() - t1
+        #self.tempoExecModelos['Comb Media best'] = tempoExec + tempo_total
         
-        t1 = time.time()
-        result_comb_mediana_best = self.ensembles_strategist.Median_Combination(data,len(test_data),methods_aux,self.result)
-        tempoExec = time.time() - t1
-        self.tempoExecModelos['Comb Mediana best'] = tempoExec + tempo_total
+        #t1 = time.time()
+        #result_comb_mediana_best = self.ensembles_strategist.Median_Combination(data,len(test_data),methods_aux,self.result)
+        #tempoExec = time.time() - t1
+        #self.tempoExecModelos['Comb Mediana best'] = tempoExec + tempo_total
         
-        t1 = time.time()
-        result_comb_media_aparada_best = self.ensembles_strategist.Trimmed_Mean_Combination(data,len(test_data),methods_aux,self.result)
-        tempoExec = time.time() - t1
-        self.tempoExecModelos['Comb Media Aparada best'] = tempoExec + tempo_total
+        #t1 = time.time()
+        #result_comb_media_aparada_best = self.ensembles_strategist.Trimmed_Mean_Combination(data,len(test_data),methods_aux,self.result)
+        #tempoExec = time.time() - t1
+        #self.tempoExecModelos['Comb Media Aparada best'] = tempoExec + tempo_total
         
-        t1 = time.time()
-        result_comb_media_ponderada_best = self.ensembles_strategist.weighted_average_Combination(data,len(test_data),methods_aux,self.result,forecast_errors_mse)
-        tempoExec = time.time() - t1
-        self.tempoExecModelos['Comb Media Ponderada best'] = tempoExec + tempo_total
+        #t1 = time.time()
+        #result_comb_media_ponderada_best = self.ensembles_strategist.weighted_average_Combination(data,len(test_data),methods_aux,self.result,forecast_errors_mse)
+        #tempoExec = time.time() - t1
+        #self.tempoExecModelos['Comb Media Ponderada best'] = tempoExec + tempo_total
         
         
-        self.result['Comb Media best'] = result_comb_media_best
-        self.result['Comb Mediana best'] = result_comb_mediana_best
-        self.result['Comb Media Aparada best'] = result_comb_media_aparada_best
-        self.result['Comb Media Ponderada best'] = result_comb_media_ponderada_best
+        #self.result['Comb Media best'] = result_comb_media_best
+        #self.result['Comb Mediana best'] = result_comb_mediana_best
+        #self.result['Comb Media Aparada best'] = result_comb_media_aparada_best
+        #self.result['Comb Media Ponderada best'] = result_comb_media_ponderada_best
         
         plt.plot(data,label='Original')
         plt.plot(result_comb_media, label='Comb Media')
         plt.plot(result_comb_mediana, label='Comb Mediana')   
         plt.plot(result_comb_media_aparada, label='Comb Media Aparada')   
         plt.plot(result_comb_media_ponderada, label='Comb Media Ponderada')   
-        plt.plot(result_comb_media_best, label='Comb Media best')
-        plt.plot(result_comb_mediana_best, label='Comb Mediana best')   
-        plt.plot(result_comb_media_aparada_best, label='Comb Media Aparada best')   
-        plt.plot(result_comb_media_ponderada_best, label='Comb Media Ponderada best') 
+        #plt.plot(result_comb_media_best, label='Comb Media best')
+        #plt.plot(result_comb_mediana_best, label='Comb Mediana best')   
+        #plt.plot(result_comb_media_aparada_best, label='Comb Media Aparada best')   
+        #plt.plot(result_comb_media_ponderada_best, label='Comb Media Ponderada best') 
         plt.legend(loc="upper left")
         plt.gcf().autofmt_xdate()
         plt.show()

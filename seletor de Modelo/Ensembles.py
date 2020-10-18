@@ -86,7 +86,9 @@ class Ensembles:
         result_validation = self.result.copy()
         for m in result_validation:
             result_validation[m] = result_validation[m][:-tamanhoValidacao]
-            
+        
+        print(f"tamanho validação: {len(test_data[:-tamanhoValidacao])}")
+        print(f"test_data[:-tamanhoValidacao]): {test_data[:-tamanhoValidacao]}")
         forecast_errors_mse = self.predict_erros.error_MSE(methods,result_validation,test_data[:-tamanhoValidacao])      
         forecast_errors_rmse = self.predict_erros.error_RMSE(methods,result_validation,test_data[:-tamanhoValidacao])
         #train_errors_rmse = self.predict_erros.error_RMSE(methods,self.result_train,tain_data)

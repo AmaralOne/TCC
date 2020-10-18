@@ -56,62 +56,68 @@ class Individuo():
             print("Metodos Selecionados: ",methods_selecionados)
             melhor = 9000000000
             
-            result_comb = self.ensembles_strategist.Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
-            erro_aux = ut.rmse(self.test_data,result_comb)
-            if erro_aux < melhor:
-                melhor = erro_aux
-                result_comb_f = result_comb
-                self.cromossomo[tamanho_cromossomo-2] = '0'
-                self.cromossomo[tamanho_cromossomo-1] = '0'
+            #result_comb = self.ensembles_strategist.Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
+            #erro_aux = ut.rmse(self.test_data,result_comb)
+            #if erro_aux < melhor:
+             #   melhor = erro_aux
+              #  result_comb_f = result_comb
+               # self.cromossomo[tamanho_cromossomo-2] = '0'
+                #self.cromossomo[tamanho_cromossomo-1] = '0'
                 
-            result_comb = self.ensembles_strategist.Median_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
-            erro_aux = ut.rmse(self.test_data,result_comb)
-            if erro_aux < melhor:
-                melhor = erro_aux
-                result_comb_f = result_comb
-                self.cromossomo[tamanho_cromossomo-2] = '0'
-                self.cromossomo[tamanho_cromossomo-1] = '1'
+            #result_comb = self.ensembles_strategist.Median_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
+            #erro_aux = ut.rmse(self.test_data,result_comb)
+            #if erro_aux < melhor:
+             #   melhor = erro_aux
+              #  result_comb_f = result_comb
+               # self.cromossomo[tamanho_cromossomo-2] = '0'
+                #self.cromossomo[tamanho_cromossomo-1] = '1'
                 
-            result_comb = self.ensembles_strategist.Trimmed_Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
-            erro_aux = ut.rmse(self.test_data,result_comb)
-            if erro_aux < melhor:
-                melhor = erro_aux
-                result_comb_f = result_comb
-                self.cromossomo[tamanho_cromossomo-2] = '1'
-                self.cromossomo[tamanho_cromossomo-1] = '0'
+            #result_comb = self.ensembles_strategist.Trimmed_Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
+            #erro_aux = ut.rmse(self.test_data,result_comb)
+            #if erro_aux < melhor:
+             #   melhor = erro_aux
+              #  result_comb_f = result_comb
+               # self.cromossomo[tamanho_cromossomo-2] = '1'
+                #self.cromossomo[tamanho_cromossomo-1] = '0'
                 
-            forecast_errors_mse = self.predict_erros.error_RMSE(methods_selecionados,self.result_predict,self.test_data)   
-            result_comb = self.ensembles_strategist.weighted_average_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict,forecast_errors_mse)
-            erro_aux = ut.rmse(self.test_data,result_comb)
-            if erro_aux < melhor:
-                melhor = erro_aux
-                result_comb_f = result_comb
-                self.cromossomo[tamanho_cromossomo-2] = '1'
-                self.cromossomo[tamanho_cromossomo-1] = '1'
+            #forecast_errors_mse = self.predict_erros.error_RMSE(methods_selecionados,self.result_predict,self.test_data)   
+            #result_comb = self.ensembles_strategist.weighted_average_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict,forecast_errors_mse)
+            #erro_aux = ut.rmse(self.test_data,result_comb)
+            #if erro_aux < melhor:
+             #   melhor = erro_aux
+              #  result_comb_f = result_comb
+               # self.cromossomo[tamanho_cromossomo-2] = '1'
+                #self.cromossomo[tamanho_cromossomo-1] = '1'
             
-            print("Media")
-            result_comb = self.ensembles_strategist.Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
-            self.cromossomo[tamanho_cromossomo-2] = '0'
-            self.cromossomo[tamanho_cromossomo-1] = '0'
+            #print("Media")
+            #result_comb = self.ensembles_strategist.Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
+            #self.cromossomo[tamanho_cromossomo-2] = '0'
+            #self.cromossomo[tamanho_cromossomo-1] = '0'
             
-            #if (self.cromossomo[tamanho_cromossomo-2] == '0') and self.cromossomo[tamanho_cromossomo-1] == '0':
-             #   print("Media")
-              #  result_comb = self.ensembles_strategist.Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
-            #elif (self.cromossomo[tamanho_cromossomo-2] == '0') and self.cromossomo[tamanho_cromossomo-1] == '1':
-             #   result_comb = self.ensembles_strategist.Median_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
-              #  print("Mediana")
-           # elif self.cromossomo[tamanho_cromossomo-2] == '1' and self.cromossomo[tamanho_cromossomo-1] == '0':
-            #    result_comb = self.ensembles_strategist.Trimmed_Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
-             #   print("Media Aparada")
-            #elif self.cromossomo[tamanho_cromossomo-2] == '1' and self.cromossomo[tamanho_cromossomo-1] == '1':
-             #   print("Media Ponderada")
-              #  forecast_errors_mse = self.predict_erros.error_RMSE(methods_selecionados,self.result_predict,self.test_data)   
-               # result_comb = self.ensembles_strategist.weighted_average_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict,forecast_errors_mse)
+            if (self.cromossomo[tamanho_cromossomo-2] == '0') and self.cromossomo[tamanho_cromossomo-1] == '0':
+                print("Media")
+                result_comb = self.ensembles_strategist.Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
+            elif (self.cromossomo[tamanho_cromossomo-2] == '0') and self.cromossomo[tamanho_cromossomo-1] == '1':
+                result_comb = self.ensembles_strategist.Median_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
+                print("Mediana")
+            elif self.cromossomo[tamanho_cromossomo-2] == '1' and self.cromossomo[tamanho_cromossomo-1] == '0':
+                result_comb = self.ensembles_strategist.Trimmed_Mean_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict)
+                print("Media Aparada")
+            elif self.cromossomo[tamanho_cromossomo-2] == '1' and self.cromossomo[tamanho_cromossomo-1] == '1':
+                print("Media Ponderada")
+                forecast_errors_mse = self.predict_erros.error_RMSE(methods_selecionados,self.result_predict,self.test_data)   
+                result_comb = self.ensembles_strategist.weighted_average_Combination(self.ts,len(self.test_data),methods_selecionados,self.result_predict,forecast_errors_mse)
                     
             #self.erro = sklearn.metrics.mean_squared_error(self.test_data,result_comb) 
 
             #self.erro = ut.rmse(self.test_data,result_comb)
-            self.erro = ut.rmse(self.test_data,result_comb_f)
+            
+            self.erro = ut.smape(self.test_data,result_comb)
+            
+            if self.erro == 0:
+                self.erro = 0.00000001
+      
+            
             self.nota_avaliacao = (1/self.erro)
             #self.nota_avaliacao = (1/self.erro) - ((1/self.erro)*0.02*n)
         else:
@@ -275,7 +281,7 @@ if __name__ == '__main__':
     bio = UtilsBIO.UtilsBio()
     index = bio.listarProdutos()
     
-    cols = ['serie','mase_mean','mase_std', 'rmse_mean','rmse_std']
+    cols = ['serie','smape_mean','smape_std', 'rmse_mean','rmse_std']
     
     media_ponderada_result = []
     reuslt_comb_selection = pd.DataFrame(columns=cols)
@@ -285,7 +291,7 @@ if __name__ == '__main__':
               # 'MLP A4','MLP A5', 'MLP A6','RNN A1','RNN A2','RNN A3',
                #'RNN A4', 'RNN A5','RNN A6', 'ELM']
                
-    modelos = ['ses','naive','holt','Ar','Croston', 'Arima','SVR A1', 'SVR A2', 'SVR A3',
+    modelos = ['ses','naive','holt','Ar', 'Arima','SVR A1', 'SVR A2', 'SVR A3',
                'SVR A4', 'SVR A5', 'SVR A6','NNAR','NNAR RNN','MLP A1','MLP A2','MLP A3',
               'RNN A1','RNN A2','RNN A3',
                 'ELM']
@@ -303,10 +309,9 @@ if __name__ == '__main__':
         erros_rmse = []
         modelos_selecionados_ensemble = pd.DataFrame(columns=cols_r)
         for i in range(20):
-            #serie = 'ts1'
+            #serie = 143
             #arquivo_result = pd.read_excel("Resultado_Predict_N1679.xlsx")
             #arquivo_result = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_validacao30Porcent_'+serie+'.xlsx',None)
-            arquivo_result = pd.read_excel('D:\TCC\seletor de Modelo\Result_bio\Resultado_2Predict'+str(serie)+'.xlsx',None)
             
             #results = {}
             #for m in range(len(arquivo_result)):
@@ -318,6 +323,30 @@ if __name__ == '__main__':
             #ts = U_m3.buildM3DataFrame("N1679")
             
             #tamanho_teste = 18
+            
+            ts = bio.read_Dataset_BIO(serie)
+            #tamanho_teste = 6
+                
+            #Dividir a Série Temporal em treino e Teste
+            tamanho_serie = len(ts)
+            
+            tamanho_teste = (int)((len(ts))*0.2)
+            
+            if tamanho_serie < 30:
+                continue
+            
+            zero = False
+            for i in range(len(ts)):
+                if ts[i] == 0:
+                    zero = True
+                    break
+            
+            if zero == True:
+                continue
+            
+            
+            
+            arquivo_result = pd.read_excel('D:\Projetos\TCC\seletor de Modelo\Result_bio\Resultado_Predict_20%'+str(serie)+'.xlsx',None)
             
             result_validation = arquivo_result.pop('predict_validation')
         
@@ -331,28 +360,92 @@ if __name__ == '__main__':
             
 
             
-            ts = bio.read_Dataset_BIO(serie)
-            tamanho_teste = 6
-                
-            #Dividir a Série Temporal em treino e Teste
-            tamanho_serie = len(ts)
             
-            if tamanho_serie < 30:
-                continue
             
             incio_de_teste = (tamanho_serie-tamanho_teste)
             #tamanho_validacao = (int)((len(ts)-tamanho_teste)*0.2)
+            tamanho_validacao = (int)((len(ts))*0.2)
             #tamanho_validacao = (int)((tamanho_teste + (tamanho_teste//2)))
-            #inico_de_validacao = (tamanho_serie-(tamanho_teste+tamanho_validacao))
-            inico_de_validacao = (tamanho_serie-(tamanho_teste*2))
+            inico_de_validacao = (tamanho_serie-(tamanho_teste+tamanho_validacao))
+            #inico_de_validacao = (tamanho_serie-(tamanho_teste*2))
             trainData = ts[:incio_de_teste]
             testData = ts[incio_de_teste:]
             validationData = ts[inico_de_validacao:incio_de_teste]
             
 
             
-            #Cenario 49 com validacao 20% e crossover novo e nova fitnnes smape, varendo todas estrategia de combinacao
+            #Cenario 1  mesmo tamanho de teste mesmo de validação
             tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            
+            #Cenario 2  mesmo tamanho de teste mesmo de validação
+            tamanho_populacao = 20
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            
+            #Cenario 3  validação 20%
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            
+             #Cenario 4  mesmo validação 30%
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            
+             #Cenario 5  mesmo tamanho de teste mesmo de validação
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 200
+            
+            #Cenario 6  mesmo tamanho de teste mesmo de validação
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 200
+            
+            #Cenario 7  validação 20%
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            
+            #Cenario 8  validação 20% sem séries intermitentes
+            tamanho_populacao = 10
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            
+            #Cenario 9  validação 20% sem séries intermitentes só co combinação média
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            
+            #Cenario 10  validação 20% sem séries intermitentes só co combinação média
+            tamanho_populacao = 5
+            taxa_mutacao = 0.20
+            numero_geracoes = 100
+            
+            #Cenario 11  validação 20% sem séries intermitentes normal
+            tamanho_populacao = 5
+            taxa_mutacao = 0.20
+            numero_geracoes = 100
+            
+            #Cenario 12  validação 20% sem séries intermitentes normal
+            tamanho_populacao = 5
+            taxa_mutacao = 0.20
+            numero_geracoes = 175
+            
+            #Cenario 13  validação 20% sem séries intermitentes normal
+            tamanho_populacao = 10
+            taxa_mutacao = 0.20
+            numero_geracoes = 175
+            
+            #Cenario 14  60% 20% 20%
+            tamanho_populacao = 5
+            taxa_mutacao = 0.10
+            numero_geracoes = 100
+            
+            #Cenario 15  60% 20% 20%
+            tamanho_populacao = 10
             taxa_mutacao = 0.10
             numero_geracoes = 100
             
@@ -372,7 +465,7 @@ if __name__ == '__main__':
             plt.title("Acompanhamento dos valores")
             plt.show() 
             
-            result_series = pd.read_excel('D:\TCC\seletor de Modelo\Result_bio_Retreino\Resultado_Predict_retreino2_'+str(serie)+'.xlsx',None)   
+            result_series = pd.read_excel('D:\Projetos\TCC\seletor de Modelo\Result_bio_Retreino\Resultado_Predict_retreino20%_'+str(serie)+'.xlsx',None)   
             result_prediction = result_series.pop('predict_test')
             
             ensembles_strategist = Ensemble_Strategist.Ensemble_Strategist()
@@ -415,13 +508,15 @@ if __name__ == '__main__':
             plt.title("Resultado comb selection "+str(serie))
             plt.show() 
             
-            forecast_errors_smape_validation = ut.mase(trainData.values,validationData.values,result_comb_v.values)
-            forecast_errors_smape = ut.mase(trainData.values,testData.values,result_comb.values)
+            #forecast_errors_smape_validation = ut.smape(trainData.values,validationData.values,result_comb_v.values)
+            #forecast_errors_smape = ut.smape(trainData.values,testData.values,result_comb.values)
+            forecast_errors_smape_validation = ut.smape(validationData,result_comb_v)
+            forecast_errors_smape = ut.smape(testData,result_comb)
             forecast_errors_rmse = ut.rmse(testData,result_comb)
         
             erros_smape.append(forecast_errors_smape)
             erros_rmse.append(forecast_errors_rmse)
-            print(f"mase: {forecast_errors_smape}")
+            print(f"smape: {forecast_errors_smape}")
             print(f"rmse: {forecast_errors_rmse}")
             
             line_r = {'erro validation': round(forecast_errors_smape_validation,3),
@@ -431,12 +526,25 @@ if __name__ == '__main__':
                 line_r[str(m+1)] = modelos_escolhidos[m]
 
             modelos_selecionados_ensemble = modelos_selecionados_ensemble.append(line_r,ignore_index=True)
-        modelos_selecionados_ensemble.to_excel(excel_writer='ResultadoEnsemble/1_cenario_Ensemble_Cosmetico_'+str(serie)+'.xlsx',index=False)
+            
+        if tamanho_serie < 30:
+                continue
+            
+        zero = False
+        for i in range(len(ts)):
+            if ts[i] == 0:
+                zero = True
+                break
+            
+        if zero == True:
+            continue
+            
+        modelos_selecionados_ensemble.to_excel(excel_writer='ResultadoEnsemble/15_cenario_Ensemble_Cosmetico_'+str(serie)+'.xlsx',index=False)
         erros_smape = np.array(erros_smape)
         erros_rmse = np.array(erros_rmse)  
         line = {'serie':serie,
-                 'mase_mean': round(erros_smape.mean(),3),
-                 'mase_std': round(erros_smape.std(),3),
+                 'smape_mean': round(erros_smape.mean(),3),
+                 'smape_std': round(erros_smape.std(),3),
                  'rmse_mean': round(erros_rmse.mean(),3),
                  'rmse_std': round(erros_rmse.std(),3),
                  }
@@ -448,7 +556,7 @@ if __name__ == '__main__':
             if result_prediction.iloc[m][0] not in modelos:
                 continue           
             results_tt[result_prediction.iloc[m][0]] = pd.Series(result_prediction.iloc[m][1:])
-        
+        serie
         forecast_errors_mse = predict_erros.error_RMSE(modelos,results,validationData) 
         result_media_ponderada = ensembles_strategist.weighted_average_Combination(ts,tamanho_teste,modelos,results_tt,forecast_errors_mse)    
         media_ponderada_errors_smape = ut.smape(testData,result_media_ponderada)
@@ -457,5 +565,5 @@ if __name__ == '__main__':
     media_ponderada_result = np.array(media_ponderada_result)
     print('média ponderada (média): ',media_ponderada_result.mean())
     print('média ponderada (std): ',media_ponderada_result.std())
-    reuslt_comb_selection.to_excel(excel_writer='Resultado_Ensemble_cosmetico_cenario_1.xlsx',index=False)
+    reuslt_comb_selection.to_excel(excel_writer='Resultado_Ensemble_cosmetico_cenario_15.xlsx',index=False)
     

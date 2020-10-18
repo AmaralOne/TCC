@@ -65,12 +65,22 @@ class Ensemble_Strategist:
     
     def weighted_average_Combination(self,ts,test_size,methods,results,errors):
         erros = {}
+        
         for m in methods:
-            erros[m] = errors[m]
+            
+            if errors[m] != 0:
+                erros[m] = errors[m]
+            else:
+                erros[m] = 0.001
         erros = list(erros.values())
         erros = np.array(erros)
+        
         e = erros **-1
-        total_erro = e.sum();
+        
+        
+        
+        total_erro = e.sum()
+        
         aux_results = []
         comb_media_ponderada = []
         total = 0

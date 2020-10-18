@@ -19,6 +19,7 @@ class UtilsBio:
         
     def listarProdutos(self):
         d = datetime.date(2016,6,30)
+        d = pd.to_datetime('2016-06-30')
         produtos = self.aqruivo[self.aqruivo['Data'] <= d ]
         produtos = produtos['Codigo']
         produtos = produtos.unique()

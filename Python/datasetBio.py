@@ -20,6 +20,7 @@ aqruivo = pd.read_excel(path+file)
 
 def listarProdutos():
     d = datetime.date(2016,6,30)
+    d = pd.to_datetime('2016-06-30')
     produtos = aqruivo[aqruivo['Data'] <= d ]
     produtos = produtos['Codigo']
     produtos = produtos.unique()
@@ -53,7 +54,24 @@ resultSheet1 = pd.DataFrame(columns=cols)
         
 
 for p in produtos:
+    
     serie = read_Dataset_BIO(p)
+    
+    tamanho_serie = len(serie)
+            
+    if tamanho_serie < 30:
+        continue
+            
+    zero = False
+    for i in range(len(serie)):
+        if serie[i] == 0:
+            zero = True
+            break
+            
+    if zero == True:
+        continue
+            
+    
 
     plt.plot(serie)
     plt.title('Codigo Produto '+str(p))
@@ -95,7 +113,7 @@ line = {'Produto':'STD',
                         'CV':resultSheet1['CV'].std()}
 
 resultSheet1 = resultSheet1.append(line,ignore_index=True)
-resultSheet1.to_excel(excel_writer='DescricaoBaseBio.xlsx',index=False)
+resultSheet1.to_excel(excel_writer='DescricaoBaseBio2.xlsx',index=False)
     
     
 #Verificar Produtos

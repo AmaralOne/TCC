@@ -20,23 +20,12 @@ modelos = ['ses','naive','holt','Ar', 'Arima','SVR A1', 'SVR A2', 'SVR A3',
                'RNN A1','RNN A2','RNN A3',
                 'ELM']
 
-modelos.append('NNAR_best')
-modelos.append('NNAR RNN_best')
-modelos.append('MLP A1_best')
-modelos.append('MLP A2_best')
-modelos.append('MLP A3_best')
-modelos.append('RNN A1_best')
-modelos.append('RNN A2_best')
-modelos.append('RNN A3_best')
-modelos.append('ELM_best')
+
 modelos.append('Comb Media')
 modelos.append('Comb Mediana')
 modelos.append('Comb Media Aparada')
 modelos.append('Comb Media Ponderada')
-modelos.append('Comb Media best')
-modelos.append('Comb Mediana best')
-modelos.append('Comb Media Aparada best')
-modelos.append('Comb Media Ponderada best')
+
 
 cols = ['Série']
 cols.extend(modelos)
@@ -50,17 +39,30 @@ reuslt_test_mase = pd.DataFrame(columns=cols)
 for serie in index:
     
     ts = bio.read_Dataset_BIO(serie)
-    tamanho_teste = 6
+    #tamanho_teste = 6
+    tamanho_teste = (int)((len(ts))*0.2)
     
     tamanho_serie = len(ts)
     
     if tamanho_serie < 30:
         continue
     
+    zero = False
+    for i in range(len(ts)):
+        if ts[i] == 0:
+            zero = True
+            break
+    
+    if zero == True:
+        continue
+    
+    #tamanho_validacao = (int)((len(ts)-tamanho_teste)*0.2)
+    tamanho_validacao = (int)((len(ts))*0.2)
     print(serie)
     #Dividir a Série Temporal em treino e Teste
     tamanho_serie = len(ts)
     inico_de_validacao = (tamanho_serie-(tamanho_teste*2))
+    inico_de_validacao = (tamanho_serie-(tamanho_teste+tamanho_validacao))
     incio_de_teste = (tamanho_serie-tamanho_teste)
     trainData = ts[:incio_de_teste]
     validationData = ts[inico_de_validacao:incio_de_teste]
@@ -69,7 +71,7 @@ for serie in index:
     #result_series = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif\\Resultado_Predict_'+serie+'.xlsx',None)
     #result_series = pd.read_excel('C:\\Users\\Amaral\\Documents\\Faculdade\\tcc\\seletor de Modelo\Resut_cif_Retreino\\Resultado_Predict_retreino_novo_'+serie+'.xlsx',None)
     
-    result_series = pd.read_excel('Result_bio_Retreino\Resultado_Predict_retreino2_'+str(serie)+'.xlsx',None)
+    result_series = pd.read_excel('D:\\Projetos\\TCC\\seletor de Modelo\\Result_bio\\Resultado_Predict_20%'+str(serie)+'.xlsx',None)
     
 
     result_prediction = result_series.pop('predict_test')
@@ -93,7 +95,8 @@ for serie in index:
     
 
     forecast_errors_test_rmse = predict_erros.error_RMSE(modelos,results_t,testData.values)
-    forecast_errors_test_mase = predict_erros.error_MASE(modelos,results_t,testData.values,trainData.values)
+    forecast_errors_test_mase = predict_erros.error_SMAPE(modelos,results_t,testData.values)
+    #forecast_errors_test_mase = predict_erros.error_MASE(modelos,results_t,testData.values,trainData.values)
     
 
 
@@ -151,7 +154,7 @@ reuslt_test_mase = reuslt_test_mase.append(line_test_mase_std,ignore_index=True)
 
 
 #writer = pd.ExcelWriter('CIF_ERROS.xlsx', engine='xlsxwriter')
-writer = pd.ExcelWriter('CIF_ERROS_retreino_novo2.xlsx', engine='xlsxwriter')
+writer = pd.ExcelWriter('bio_ERROS_retreino_20%.xlsx', engine='xlsxwriter')
 reuslt_test_rmse.to_excel(writer,sheet_name='test_rmse',index=False)
-reuslt_test_mase.to_excel(writer,sheet_name='test_mase',index=False)
+reuslt_test_mase.to_excel(writer,sheet_name='test_smape',index=False)
 writer.save()

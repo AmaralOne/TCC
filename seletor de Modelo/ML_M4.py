@@ -117,6 +117,9 @@ class ML_M4:
         s = self.acf(original_ts, 1)
         for i in range(2, ppy):
             s = s + (self.acf(original_ts, i) ** 2)
+            
+        if s < 0:
+            s = 0
     
         limit = 1.645 * (sqrt((1 + 2 * s) / len(original_ts)))
     
@@ -270,10 +273,18 @@ class ML_M4:
         self.freq = frequency       # data frequency
         self.in_size = lag    # number of points used as input for each forecast
         self.test_data = data[:len(data) - horizion]
-               
+        
+        for s in self.ts:
+            if(s == 0):
+                self.freq = 1
+                break
+
         
         #Desanaliza a série temporal
         #self.seasonality_in = self.deseasonalize(self.ts, self.freq)
+        print(f'self.fh = {self.fh}')
+        print(f'self.freq = {self.freq}')
+        print(f'self.ts = {self.ts}')
         self.seasonality_in = self.deseasonalize(self.ts[:-self.fh], self.freq)#maneira corrigida
         
         for i in range(0, len(self.ts)):

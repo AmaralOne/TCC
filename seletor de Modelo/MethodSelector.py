@@ -124,56 +124,56 @@ class MethodSelector:
         elif (method == 'MLP A1'):
 
             model = ML_M4.ML_M4()
-            model.prepararSerie(data[:],tamanho_teste,1,1)
+            model.prepararSerie(data[:],tamanho_teste,12,1)
             preditc_train, preditc_test, preditc_train_best, preditc_test_best = model.fit_MLP()
 
         elif (method == 'MLP A2'):
    
             model = ML_M4.ML_M4()
-            model.prepararSerie(data[:],tamanho_teste,1,2)
+            model.prepararSerie(data[:],tamanho_teste,12,2)
             preditc_train, preditc_test, preditc_train_best, preditc_test_best = model.fit_MLP()
 
         elif (method == 'MLP A3'):
      
             model = ML_M4.ML_M4()
-            model.prepararSerie(data[:],tamanho_teste,1,3)
+            model.prepararSerie(data[:],tamanho_teste,12,3)
             preditc_train, preditc_test, preditc_train_best, preditc_test_best = model.fit_MLP()
 
         elif (method == 'MLP A4'):
 
             model = ML_M4.ML_M4()
-            model.prepararSerie(data[:],tamanho_teste,1,4)
+            model.prepararSerie(data[:],tamanho_teste,12,4)
             preditc_train, preditc_test, preditc_train_best, preditc_test_best = model.fit_MLP()
 
         elif (method == 'MLP A5'):
 
             model = ML_M4.ML_M4()
-            model.prepararSerie(data[:],tamanho_teste,1,5)
+            model.prepararSerie(data[:],tamanho_teste,12,5)
             preditc_train, preditc_test, preditc_train_best, preditc_test_best = model.fit_MLP()
 
         elif (method == 'MLP A6'):
    
             model = ML_M4.ML_M4()
-            model.prepararSerie(data[:],tamanho_teste,1,6)
+            model.prepararSerie(data[:],tamanho_teste,12,6)
             preditc_train, preditc_test, preditc_train_best, preditc_test_best = model.fit_MLP()
 
         elif (method == 'RNN A1'):
             
             model = ML_M4.ML_M4()
-            model.prepararSerie(data[:],tamanho_teste,1,1)
+            model.prepararSerie(data[:],tamanho_teste,12,1)
             preditc_train, preditc_test, preditc_train_best, preditc_test_best= model.fit_RNN()
             
             
         elif (method == 'RNN A2'):
             
             model = ML_M4.ML_M4()
-            model.prepararSerie(data[:],tamanho_teste,1,2)
+            model.prepararSerie(data[:],tamanho_teste,12,2)
             preditc_train, preditc_test, preditc_train_best, preditc_test_best = model.fit_RNN()
             
         elif (method == 'RNN A3'):
             
             model = ML_M4.ML_M4()
-            model.prepararSerie(data[:],tamanho_teste,1,3)
+            model.prepararSerie(data[:],tamanho_teste,12,3)
             preditc_train, preditc_test, preditc_train_best, preditc_test_best = model.fit_RNN()
             
         elif (method == 'RNN A4'):
@@ -185,19 +185,19 @@ class MethodSelector:
         elif (method == 'RNN A5'):
             
             model = ML_M4.ML_M4()
-            model.prepararSerie(data[:],tamanho_teste,1,5)
+            model.prepararSerie(data[:],tamanho_teste,12,5)
             preditc_train, preditc_test, preditc_train_best, preditc_test_best = model.fit_RNN()
             
         elif (method == 'RNN A6'):
             
             model = ML_M4.ML_M4()
-            model.prepararSerie(data,tamanho_teste,1,6)
+            model.prepararSerie(data,tamanho_teste,12,6)
             preditc_train, preditc_test, preditc_train_best, preditc_test_best = model.fit_RNN()
             
         elif (method == 'ELM'):
             
             model = ML_M4.ML_M4()
-            model.prepararSerie(data,tamanho_teste,1,1)
+            model.prepararSerie(data,tamanho_teste,12,1)
             preditc_train, preditc_test, preditc_train_best, preditc_test_best = model.fit_ELM()
             
         if(return_best == 0):
